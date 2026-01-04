@@ -15,7 +15,7 @@
 - Grafika
 - Nagrody i kary (boost do prędkości, szybszy obrót itp.)
 
-### Sterowanie
+## Sterowanie
 - **Czołg 1**:  
   - `Space`
 
