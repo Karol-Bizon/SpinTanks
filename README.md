@@ -27,10 +27,12 @@
 - CMake 3.20+
 
 ## Budowanie
-mkdir -p build \\
-cmake -S . -B build \\
+```bash
+mkdir -p build
+cmake -S . -B build
 cmake --build build -j
 
-# instalacja SFML 
-sudo apt update \\
+## instalacja SFML 
+```bash
+sudo apt update
 sudo apt install build-essential libsfml-dev
