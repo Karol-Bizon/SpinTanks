@@ -18,8 +18,8 @@
 
 ## Struktura projektu
 - `main` uruchamia grę
-- `Game` zarządza pętlą gry i wejściem
-- `Tank` odpowiada za własny stan i zachowanie
+- `Game` zarządza pętlą gry
+- `Tank` opisuje czołg
 
 ## Wymagania
 - C++17
