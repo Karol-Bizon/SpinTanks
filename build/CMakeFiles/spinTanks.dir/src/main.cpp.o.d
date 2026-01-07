@@ -235,4 +235,5 @@ CMakeFiles/spinTanks.dir/src/main.cpp.o: \
  /usr/include/SFML/Graphics/Sprite.hpp \
  /usr/include/SFML/Graphics/Text.hpp \
  /usr/include/SFML/Graphics/VertexBuffer.hpp \
- /home/karol/SpinTanks/include/tank.hpp
+ /home/karol/SpinTanks/include/tank.hpp /usr/include/c++/13/iostream \
+ /usr/include/c++/13/istream /usr/include/c++/13/bits/istream.tcc

@@ -1,11 +1,11 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "tank.hpp"
 
 class Game {
 public:
-    Game();
+    explicit Game(std::size_t tankCount);
     void run();
 
 private:
@@ -16,8 +16,5 @@ private:
 private:
     sf::RenderWindow window_;
     sf::Clock clock_;
-
-    Tank tank1_;
-    Tank tank2_;
+    std::vector<Tank> tanks_;
 };
-

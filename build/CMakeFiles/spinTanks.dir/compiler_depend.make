@@ -406,6 +406,7 @@ CMakeFiles/spinTanks.dir/src/main.cpp.o: /home/karol/SpinTanks/src/main.cpp \
   /usr/include/c++/13/bits/hash_bytes.h \
   /usr/include/c++/13/bits/invoke.h \
   /usr/include/c++/13/bits/ios_base.h \
+  /usr/include/c++/13/bits/istream.tcc \
   /usr/include/c++/13/bits/locale_classes.h \
   /usr/include/c++/13/bits/locale_classes.tcc \
   /usr/include/c++/13/bits/locale_conv.h \
@@ -476,6 +477,8 @@ CMakeFiles/spinTanks.dir/src/main.cpp.o: /home/karol/SpinTanks/src/main.cpp \
   /usr/include/c++/13/initializer_list \
   /usr/include/c++/13/ios \
   /usr/include/c++/13/iosfwd \
+  /usr/include/c++/13/iostream \
+  /usr/include/c++/13/istream \
   /usr/include/c++/13/iterator \
   /usr/include/c++/13/locale \
   /usr/include/c++/13/map \
@@ -949,6 +952,10 @@ CMakeFiles/spinTanks.dir/src/tank.cpp.o: /home/karol/SpinTanks/src/tank.cpp \
 
 /usr/include/c++/13/cmath:
 
+/usr/include/c++/13/istream:
+
+/usr/include/c++/13/iostream:
+
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h:
@@ -1016,6 +1023,8 @@ CMakeFiles/spinTanks.dir/src/tank.cpp.o: /home/karol/SpinTanks/src/tank.cpp \
 /usr/include/c++/13/bits/locale_facets_nonio.h:
 
 /usr/include/c++/13/bits/locale_facets.tcc:
+
+/usr/include/c++/13/bits/istream.tcc:
 
 /usr/include/c++/13/bits/locale_conv.h:
 

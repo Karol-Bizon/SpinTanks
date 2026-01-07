@@ -1,18 +1,40 @@
 #include "game.hpp"
 
-static constexpr float WORLD_WIDTH  = 800.f;
-static constexpr float WORLD_HEIGHT = 600.f;
+static constexpr float WORLD_WIDTH  = 1000.f;
+static constexpr float WORLD_HEIGHT = 1000.f;
 
-Game::Game()
-: window_(sf::VideoMode(int(WORLD_WIDTH), int(WORLD_HEIGHT)), "SpinTanks"),
-  tank1_({250.f, 300.f}, sf::Keyboard::Space),
-  tank2_({550.f, 300.f}, sf::Keyboard::Enter)
+static const sf::Keyboard::Key TANK_KEYS[4] = {
+    sf::Keyboard::Space,
+    sf::Keyboard::Enter,
+    sf::Keyboard::W,
+    sf::Keyboard::Up
+};
+
+static const sf::Vector2f TANK_POSITIONS[4] = {
+    {0.3f*WORLD_WIDTH, 0.3f*WORLD_HEIGHT},
+    {0.7f*WORLD_WIDTH, 0.7f*WORLD_HEIGHT},
+    {0.7f*WORLD_WIDTH, 0.3f*WORLD_HEIGHT},
+    {0.3f*WORLD_WIDTH, 0.7f*WORLD_HEIGHT}
+};
+
+
+Game::Game(std::size_t tankCount)
+: window_(sf::VideoMode(
+      static_cast<unsigned>(WORLD_WIDTH),
+      static_cast<unsigned>(WORLD_HEIGHT)),
+      "SpinTanks")
 {
     window_.setFramerateLimit(60);
 
+    tankCount = std::clamp(tankCount, std::size_t{1}, std::size_t{4});
+    tanks_.reserve(tankCount);
+
     const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
-    tank1_.setWorldBounds(world);
-    tank2_.setWorldBounds(world);
+
+    for (std::size_t i = 0; i < tankCount; ++i) {
+        tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i]);
+        tanks_.back().setWorldBounds(world);
+    }
 }
 
 
@@ -31,20 +53,19 @@ void Game::processEvents() {
         if (e.type == sf::Event::Closed)
             window_.close();
 
-        tank1_.handleEvent(e);
-        tank2_.handleEvent(e);
+        for (auto& tank : tanks_)
+            tank.handleEvent(e);
     }
 }
 
-
 void Game::update(float dt) {
-    tank1_.update(dt);
-    tank2_.update(dt);
+    for (auto& tank : tanks_)
+        tank.update(dt);
 }
 
 void Game::render() {
     window_.clear();
-    tank1_.draw(window_);
-    tank2_.draw(window_);
+    for (auto& tank : tanks_)
+        tank.draw(window_);
     window_.display();
 }
