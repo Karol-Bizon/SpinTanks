@@ -1,5 +1,5 @@
 # SpinTanks
-
+XD
 ## Aktualne mechaniki
 - Dwa czołgi w widoku 2D
 - Czołg:
