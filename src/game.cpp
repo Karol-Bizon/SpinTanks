@@ -4,13 +4,13 @@ static constexpr float WORLD_WIDTH  = 800.f;
 static constexpr float WORLD_HEIGHT = 600.f;
 
 Game::Game()
-: window_(sf::VideoMode(800, 600), "SpinTanks"),
+: window_(sf::VideoMode(int(WORLD_WIDTH), int(WORLD_HEIGHT)), "SpinTanks"),
   tank1_({250.f, 300.f}, sf::Keyboard::Space),
   tank2_({550.f, 300.f}, sf::Keyboard::Enter)
 {
     window_.setFramerateLimit(60);
 
-    const sf::FloatRect world{0.f, 0.f, 800.f, 600.f};
+    const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
     tank1_.setWorldBounds(world);
     tank2_.setWorldBounds(world);
 }

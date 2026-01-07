@@ -28,7 +28,7 @@ private:
     sf::Keyboard::Key controlKey_;
 
     float angleDeg_ = 0.f;
-    float turnSpeed_ = 120.f;
+    float turnSpeed_ = 180.f;
     float moveSpeed_ = 180.f;
     float turnDirection_ = 1.f;
 
