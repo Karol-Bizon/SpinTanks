@@ -1,7 +1,7 @@
 # SpinTanks
 
 ## Aktualne mechaniki
-- Dwa czołgi w widoku 2D
+- Czołgi w widoku 2D (możliwość wyboru liczby graczy (1-4))
 - Czołg:
   - obraca się stale z zadaną prędkością kątową
   - po przytrzymaniu klawisza jedzie prosto w aktualnym kierunku
