@@ -14,6 +14,7 @@
 - Generowanie przeszkód
 - Grafika
 - Nagrody i kary (boost do prędkości, szybszy obrót itp.)
+- Jakby się komuś nudziło to można zrobić opcję gry z komputerem
 
 ## Sterowanie
 - **Czołg 1**:  
