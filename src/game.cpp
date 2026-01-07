@@ -2,6 +2,7 @@
 
 static constexpr float WORLD_WIDTH  = 1000.f;
 static constexpr float WORLD_HEIGHT = 1000.f;
+static constexpr float START_POSITION_FRAC = 0.15f;
 
 static const sf::Keyboard::Key TANK_KEYS[4] = {
     sf::Keyboard::Space,
@@ -11,10 +12,10 @@ static const sf::Keyboard::Key TANK_KEYS[4] = {
 };
 
 static const sf::Vector2f TANK_POSITIONS[4] = {
-    {0.3f*WORLD_WIDTH, 0.3f*WORLD_HEIGHT},
-    {0.7f*WORLD_WIDTH, 0.7f*WORLD_HEIGHT},
-    {0.7f*WORLD_WIDTH, 0.3f*WORLD_HEIGHT},
-    {0.3f*WORLD_WIDTH, 0.7f*WORLD_HEIGHT}
+    {START_POSITION_FRAC*WORLD_WIDTH        , START_POSITION_FRAC*WORLD_HEIGHT},
+    {(1.f - START_POSITION_FRAC)*WORLD_WIDTH, (1.f - START_POSITION_FRAC)*WORLD_HEIGHT},
+    {(1.f - START_POSITION_FRAC)*WORLD_WIDTH, START_POSITION_FRAC*WORLD_HEIGHT},
+    {START_POSITION_FRAC*WORLD_WIDTH        ,  (1.f - START_POSITION_FRAC)*WORLD_HEIGHT}
 };
 
 
