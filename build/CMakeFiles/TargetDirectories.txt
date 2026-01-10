@@ -1,3 +1,0 @@
-/home/karol/SpinTanks/build/CMakeFiles/spinTanks.dir
-/home/karol/SpinTanks/build/CMakeFiles/edit_cache.dir
-/home/karol/SpinTanks/build/CMakeFiles/rebuild_cache.dir
