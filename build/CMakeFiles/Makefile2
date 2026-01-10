@@ -85,12 +85,12 @@ clean: CMakeFiles/spinTanks.dir/clean
 CMakeFiles/spinTanks.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kacwik/SpinTanks/build/CMakeFiles --progress-num=1,2,3,4 "Built target spinTanks"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kacwik/SpinTanks/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target spinTanks"
 .PHONY : CMakeFiles/spinTanks.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/spinTanks.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kacwik/SpinTanks/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kacwik/SpinTanks/build/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/spinTanks.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/kacwik/SpinTanks/build/CMakeFiles 0
 .PHONY : CMakeFiles/spinTanks.dir/rule
@@ -102,7 +102,7 @@ spinTanks: CMakeFiles/spinTanks.dir/rule
 # codegen rule for target.
 CMakeFiles/spinTanks.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kacwik/SpinTanks/build/CMakeFiles --progress-num=1,2,3,4 "Finished codegen for target spinTanks"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kacwik/SpinTanks/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Finished codegen for target spinTanks"
 .PHONY : CMakeFiles/spinTanks.dir/codegen
 
 # clean rule for target.

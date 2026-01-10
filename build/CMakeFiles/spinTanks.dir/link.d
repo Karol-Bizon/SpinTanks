@@ -5,6 +5,8 @@ spinTanks: \
   CMakeFiles/spinTanks.dir/src/main.cpp.o \
   CMakeFiles/spinTanks.dir/src/game.cpp.o \
   CMakeFiles/spinTanks.dir/src/tank.cpp.o \
+  CMakeFiles/spinTanks.dir/src/tilemap.cpp.o \
+  CMakeFiles/spinTanks.dir/src/projectile.cpp.o \
   /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1 \
   /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1 \
   /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1 \
@@ -67,6 +69,10 @@ CMakeFiles/spinTanks.dir/src/main.cpp.o:
 CMakeFiles/spinTanks.dir/src/game.cpp.o:
 
 CMakeFiles/spinTanks.dir/src/tank.cpp.o:
+
+CMakeFiles/spinTanks.dir/src/tilemap.cpp.o:
+
+CMakeFiles/spinTanks.dir/src/projectile.cpp.o:
 
 /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1:
 

@@ -4,6 +4,21 @@ static constexpr float WORLD_WIDTH  = 1000.f;
 static constexpr float WORLD_HEIGHT = 1000.f;
 static constexpr float START_POSITION_FRAC = 0.15f;
 
+
+static const sf::Keyboard::Key MOVE_KEYS[4] = {
+    sf::Keyboard::Space,
+    sf::Keyboard::Enter,
+    sf::Keyboard::W,
+    sf::Keyboard::Up
+};
+
+static const sf::Keyboard::Key SHOOT_KEYS[4] = {
+    sf::Keyboard::LShift,
+    sf::Keyboard::RShift,
+    sf::Keyboard::F,
+    sf::Keyboard::RControl
+};
+
 static const sf::Keyboard::Key TANK_KEYS[4] = {
     sf::Keyboard::Space,
     sf::Keyboard::Enter,
@@ -18,24 +33,69 @@ static const sf::Vector2f TANK_POSITIONS[4] = {
     {START_POSITION_FRAC*WORLD_WIDTH        , (1.f - START_POSITION_FRAC)*WORLD_HEIGHT}
 };
 
+static const char* TANK_FILES[4] = {
+    "graphics/tank1.png",
+    "graphics/tank2.png",
+    "graphics/tank3.png",
+    "graphics/tank4.png"
+};
 
-Game::Game(std::size_t tankCount)
+Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
 : window_(sf::VideoMode(
       static_cast<unsigned>(WORLD_WIDTH),
       static_cast<unsigned>(WORLD_HEIGHT)),
-      "SpinTanks")
-{
+      "SpinTanks"),
+  maxBuildBlocks_(maxBuildBlocks),
+  builtBlocks_(0),
+  editorEnabled_(true)
+{   
+    
     window_.setFramerateLimit(60);
 
+     if (!backgroundTex_.loadFromFile("graphics/background.png")) {
+        //
+    } else {
+        backgroundSprite_.setTexture(backgroundTex_);
+        sf::Vector2u s = backgroundTex_.getSize();
+        backgroundSprite_.setScale(
+            WORLD_WIDTH  / static_cast<float>(s.x),
+            WORLD_HEIGHT / static_cast<float>(s.y)
+        );
+    }
+
+    if (!fireTex_.loadFromFile("graphics/fire.png")) {
+        //
+    }
+    
     tankCount = std::clamp(tankCount, std::size_t{1}, std::size_t{4});
+
+    for (std::size_t i = 0; i < tankCount; ++i) {
+        if (!tankTex_[i].loadFromFile(TANK_FILES[i])) {
+            //
+        }
+    }
+
     tanks_.reserve(tankCount);
 
     const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
 
     for (std::size_t i = 0; i < tankCount; ++i) {
-        tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i]);
+        tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i], tankTex_[i]);
         tanks_.back().setWorldBounds(world);
     }
+
+    if (!map_.loadAtlasFromFiles({
+        "graphics/block.png",
+        "graphics/block_s1.png",
+        "graphics/block_s2.png"
+    })) {
+        std::cout << "ERROR: nie moge wczytac atlasu blokow\n";
+    }
+
+    map_.create(60, 60, 0);
+    map_.setPosition(0.f, 0.f);
+    map_.setScale(0.4f, 0.4f); 
+    currentBrush_ = 1;
 }
 
 
@@ -53,20 +113,192 @@ void Game::processEvents() {
     while (window_.pollEvent(e)) {
         if (e.type == sf::Event::Closed)
             window_.close();
-
-        for (auto& tank : tanks_)
-            tank.handleEvent(e);
+        if (editorEnabled_) {
+            handleEditorInput(e);
+        } else {
+            for (auto& tank : tanks_)
+                tank.handleEvent(e);
+            handleShootInput(e);
+        }
     }
 }
 
+
 void Game::update(float dt) {
-    for (auto& tank : tanks_)
-        tank.update(dt);
+    if (editorEnabled_) return;
+
+    for (auto& tank : tanks_) {
+    sf::Vector2f before = tank.getPosition();
+    float beforeAng = tank.getAngleDeg();
+
+    tank.update(dt);
+
+    if (tankHitsBlocks(tank)) {
+        tank.setPosition(before); 
+    }
+}
+
+    for (auto& p : projectiles_)
+        p.update(dt);
+    const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
+    for (auto& p : projectiles_) {
+        if (!world.contains(p.getPosition()))
+            p.kill();
+        sf::Vector2u cell;
+        if (projectileHitCell(p, cell)) {
+            damageBlockAt(cell.x, cell.y);
+            p.kill();
+        }
+    }
+
+    projectiles_.erase(
+        std::remove_if(projectiles_.begin(), projectiles_.end(),
+                       [](const Projectile& p){ return !p.isAlive(); }),
+        projectiles_.end()
+    );
 }
 
 void Game::render() {
     window_.clear();
+
+    window_.draw(backgroundSprite_);
+
+    window_.draw(map_);
+
     for (auto& tank : tanks_)
         tank.draw(window_);
+
+    for (auto& p : projectiles_)
+        p.draw(window_);
+
     window_.display();
+}
+
+void Game::handleEditorInput(const sf::Event& e) {
+    if (e.type == sf::Event::KeyPressed) {
+        if (e.key.code == sf::Keyboard::Enter) {
+            editorEnabled_ = false;
+        }
+    }
+
+    if (e.type == sf::Event::MouseButtonPressed) {
+        if (e.mouseButton.button == sf::Mouse::Left)
+            paintAtMouse(false);
+        if (e.mouseButton.button == sf::Mouse::Right)
+            paintAtMouse(true);
+    }
+
+    if (e.type == sf::Event::MouseMoved) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            paintAtMouse(false);
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+            paintAtMouse(true);
+    }
+}
+
+void Game::paintAtMouse(bool erase) {
+    sf::Vector2i pixel = sf::Mouse::getPosition(window_);
+    sf::Vector2f world = window_.mapPixelToCoords(pixel);
+
+    sf::Vector2i cell = map_.worldToCell(world);
+    if (cell.x < 0 || cell.y < 0) return;
+    if (static_cast<unsigned>(cell.x) >= map_.getWidth()) return;
+    if (static_cast<unsigned>(cell.y) >= map_.getHeight()) return;
+
+    const unsigned x = static_cast<unsigned>(cell.x);
+    const unsigned y = static_cast<unsigned>(cell.y);
+
+    auto id = map_.get(x, y);
+
+    if (erase) {
+        if (id != 0) {
+            map_.set(x, y, 0);
+            if (builtBlocks_ > 0) builtBlocks_--;
+        }
+        return;
+    }
+
+    if (id == 0) {
+        if (builtBlocks_ >= maxBuildBlocks_) {
+            return;
+        }
+        map_.set(x, y, 1);
+        builtBlocks_++;
+    }
+}
+
+void Game::handleShootInput(const sf::Event& e) {
+    if (e.type != sf::Event::KeyPressed) return;
+
+    for (std::size_t i = 0; i < tanks_.size(); ++i) {
+        if (e.key.code == SHOOT_KEYS[i]) {
+            spawnProjectile(tanks_[i]);
+        }
+    }
+}
+
+void Game::spawnProjectile(const Tank& tank) {
+    sf::Vector2f forward = tank.getForward();
+    sf::Vector2f start = tank.getPosition() + forward * 40.f;
+
+    constexpr float bulletSpeed = 500.f;
+    sf::Vector2f vel = forward * bulletSpeed;
+
+    projectiles_.emplace_back(fireTex_, start, vel);
+}
+
+
+bool Game::tankHitsBlocks(const Tank& t) const {
+    sf::FloatRect box = t.getAABB();
+
+    sf::Vector2i c0 = map_.worldToCell({box.left, box.top});
+    sf::Vector2i c1 = map_.worldToCell({box.left + box.width, box.top + box.height});
+
+    int minX = std::max(0, std::min(c0.x, c1.x));
+    int maxX = std::min<int>(static_cast<int>(map_.getWidth()) - 1, std::max(c0.x, c1.x));
+    int minY = std::max(0, std::min(c0.y, c1.y));
+    int maxY = std::min<int>(static_cast<int>(map_.getHeight()) - 1, std::max(c0.y, c1.y));
+
+    const sf::Vector2u ts = map_.getTileSizePx();
+    const sf::Vector2f sc = map_.getScale();
+
+    for (int y = minY; y <= maxY; ++y) {
+        for (int x = minX; x <= maxX; ++x) {
+            if (map_.get(static_cast<unsigned>(x), static_cast<unsigned>(y)) != 0) {
+                sf::Vector2f cellPos = map_.cellToWorld(static_cast<unsigned>(x), static_cast<unsigned>(y));
+                sf::FloatRect tileRect(cellPos.x, cellPos.y,
+                                       ts.x * sc.x, ts.y * sc.y);
+
+                if (box.intersects(tileRect))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Game::projectileHitCell(const Projectile& p, sf::Vector2u& outCell) const {
+    sf::Vector2f center = p.getCenter();
+
+    sf::Vector2i cell = map_.worldToCell(center);
+    if (cell.x < 0 || cell.y < 0) return false;
+    if (static_cast<unsigned>(cell.x) >= map_.getWidth()) return false;
+    if (static_cast<unsigned>(cell.y) >= map_.getHeight()) return false;
+
+    if (map_.get(static_cast<unsigned>(cell.x), static_cast<unsigned>(cell.y)) != 0) {
+        outCell = { static_cast<unsigned>(cell.x), static_cast<unsigned>(cell.y) };
+        return true;
+    }
+    return false;
+}
+
+
+void Game::damageBlockAt(unsigned x, unsigned y) {
+    TileMap::TileId id = map_.get(x, y);
+    if (id == 1) map_.set(x, y, 2);
+    else if (id == 2) map_.set(x, y, 3);
+    else if (id == 3) {
+        map_.set(x, y, 0);
+        if (builtBlocks_ > 0) builtBlocks_--;
+    }
 }

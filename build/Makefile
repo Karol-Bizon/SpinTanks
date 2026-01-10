@@ -177,6 +177,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/projectile.o: src/projectile.cpp.o
+.PHONY : src/projectile.o
+
+# target to build an object file
+src/projectile.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/projectile.cpp.o
+.PHONY : src/projectile.cpp.o
+
+src/projectile.i: src/projectile.cpp.i
+.PHONY : src/projectile.i
+
+# target to preprocess a source file
+src/projectile.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/projectile.cpp.i
+.PHONY : src/projectile.cpp.i
+
+src/projectile.s: src/projectile.cpp.s
+.PHONY : src/projectile.s
+
+# target to generate assembly for a file
+src/projectile.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/projectile.cpp.s
+.PHONY : src/projectile.cpp.s
+
 src/tank.o: src/tank.cpp.o
 .PHONY : src/tank.o
 
@@ -201,6 +225,30 @@ src/tank.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/tank.cpp.s
 .PHONY : src/tank.cpp.s
 
+src/tilemap.o: src/tilemap.cpp.o
+.PHONY : src/tilemap.o
+
+# target to build an object file
+src/tilemap.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/tilemap.cpp.o
+.PHONY : src/tilemap.cpp.o
+
+src/tilemap.i: src/tilemap.cpp.i
+.PHONY : src/tilemap.i
+
+# target to preprocess a source file
+src/tilemap.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/tilemap.cpp.i
+.PHONY : src/tilemap.cpp.i
+
+src/tilemap.s: src/tilemap.cpp.s
+.PHONY : src/tilemap.s
+
+# target to generate assembly for a file
+src/tilemap.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/spinTanks.dir/build.make CMakeFiles/spinTanks.dir/src/tilemap.cpp.s
+.PHONY : src/tilemap.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -216,9 +264,15 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/projectile.o"
+	@echo "... src/projectile.i"
+	@echo "... src/projectile.s"
 	@echo "... src/tank.o"
 	@echo "... src/tank.i"
 	@echo "... src/tank.s"
+	@echo "... src/tilemap.o"
+	@echo "... src/tilemap.i"
+	@echo "... src/tilemap.s"
 .PHONY : help
 
 

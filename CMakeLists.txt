@@ -8,6 +8,8 @@ add_executable(spinTanks
     src/main.cpp
     src/game.cpp
     src/tank.cpp
+    src/tilemap.cpp
+    src/projectile.cpp
 )
 
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)

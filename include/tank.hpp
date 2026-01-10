@@ -3,7 +3,7 @@
 
 class Tank {
 public:
-    Tank(sf::Vector2f position, sf::Keyboard::Key controlKey);
+    Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture);
 
     void handleEvent(const sf::Event& e);
     void update(float dt);
@@ -19,6 +19,10 @@ public:
     float getAngleDeg() const;
     sf::FloatRect getAABB() const;
 
+    sf::Vector2f getForward() const;
+    void setPosition(sf::Vector2f p) { body_.setPosition(p); }
+
+
 private:
     void flipRotationDirection();
     void clampToWorld();
@@ -33,6 +37,7 @@ private:
     float turnDirection_ = 1.f;
 
     bool movingForward_ = false;
+    
 
     sf::FloatRect worldBounds_{0.f, 0.f, -1.f, -1.f};
 };

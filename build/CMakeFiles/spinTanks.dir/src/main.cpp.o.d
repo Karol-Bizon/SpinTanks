@@ -234,6 +234,8 @@ CMakeFiles/spinTanks.dir/src/main.cpp.o: \
  /usr/include/SFML/Graphics/Glsl.hpp /usr/include/SFML/Graphics/Glsl.inl \
  /usr/include/SFML/Graphics/Sprite.hpp \
  /usr/include/SFML/Graphics/Text.hpp \
- /usr/include/SFML/Graphics/VertexBuffer.hpp \
- /home/kacwik/SpinTanks/include/tank.hpp /usr/include/c++/13/iostream \
- /usr/include/c++/13/istream /usr/include/c++/13/bits/istream.tcc
+ /usr/include/SFML/Graphics/VertexBuffer.hpp /usr/include/c++/13/iostream \
+ /usr/include/c++/13/istream /usr/include/c++/13/bits/istream.tcc \
+ /home/kacwik/SpinTanks/include/tank.hpp \
+ /home/kacwik/SpinTanks/include/tilemap.hpp /usr/include/c++/13/cstdint \
+ /home/kacwik/SpinTanks/include/projectile.hpp

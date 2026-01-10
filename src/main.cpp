@@ -4,6 +4,7 @@
 int main() {
 
     std::size_t tankCount = 2;
+    unsigned maxBlocks = 8;
 
     std::cout << "Witaj w SpinTanks!" << std::endl;
     std::cout << "Podaj liczbę czołgów (1-4): ";
@@ -13,6 +14,10 @@ int main() {
         std::cout << "Nieprawidłowa liczba czołgów. Ustawiono domyślnie na 2." << std::endl;
         tankCount = 2;
     }
+    
+    std::cout << "- Edytor (PRZED gra): LPM stawia, PPM usuwa, Enter start\n";
+    std::cout << "Podaj limit budowanych blokow (np. 8): ";
+    std::cin >> maxBlocks;
 
     std::cout << "Sterowanie czołgami:" << std::endl;
     for (std::size_t i = 0; i < tankCount; ++i) {
@@ -26,6 +31,18 @@ int main() {
         std::cout << std::endl;
     }
 
-    Game game(tankCount);
+    std::cout << "Strzelanie czołgami:" << std::endl;
+    for (std::size_t i = 0; i < tankCount; ++i) {
+        std::cout << "Czołg " << (i + 1) << ": ";
+        switch (i) {
+            case 0: std::cout << "LShift"; break;
+            case 1: std::cout << "RShift"; break;
+            case 2: std::cout << "F"; break;
+            case 3: std::cout << "RControl"; break;
+        }
+        std::cout << std::endl;
+    }
+
+    Game game(tankCount, maxBlocks);
     game.run();
 }

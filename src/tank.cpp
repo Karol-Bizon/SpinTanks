@@ -3,10 +3,11 @@
 
 static constexpr float PI = 3.14159265f;
 
-Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey)
+Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture)
 : controlKey_(controlKey)
 {
-    body_.setSize({60.f, 30.f});
+    body_.setSize({60.f * 1.5f, 60.f * 1.5f});
+    body_.setTexture(&texture, true);
     body_.setOrigin(body_.getSize() * 0.5f);
     body_.setPosition(position);
 }
@@ -39,19 +40,26 @@ sf::FloatRect Tank::getAABB() const {
     return body_.getGlobalBounds();
 }
 
+sf::Vector2f Tank::getForward() const {
+    float rad = angleDeg_ * PI / 180.f;
+    return { std::cos(rad), std::sin(rad) };
+}
+
 void Tank::update(float dt) {
     if (!movingForward_) {
         angleDeg_ += turnDirection_ * turnSpeed_ * dt;
     }
 
     float rad = angleDeg_ * PI / 180.f;
-    sf::Vector2f forward(std::cos(rad), std::sin(rad));
-
-    if (movingForward_) {
-        body_.move(forward * moveSpeed_ * dt);
+     if (!movingForward_) {
+        angleDeg_ += turnDirection_ * turnSpeed_ * dt;
     }
 
-    body_.setRotation(angleDeg_);
+    if (movingForward_) {
+        body_.move(getForward() * moveSpeed_ * dt);
+    }
+
+    body_.setRotation(angleDeg_ + 90.f);
     clampToWorld();
 }
 
@@ -60,12 +68,12 @@ void Tank::clampToWorld() {
         return;
 
     sf::Vector2f pos = body_.getPosition();
-    sf::Vector2f half = body_.getSize() * 0.5f;
+    sf::FloatRect aabb = getAABB();
 
-    float left   = worldBounds_.left + half.x;
-    float right  = worldBounds_.left + worldBounds_.width  - half.x;
-    float top    = worldBounds_.top  + half.y;
-    float bottom = worldBounds_.top  + worldBounds_.height - half.y;
+    float left   = worldBounds_.left + (aabb.width  * 0.5f);
+    float right  = worldBounds_.left + worldBounds_.width  - (aabb.width  * 0.5f);
+    float top    = worldBounds_.top  + (aabb.height * 0.5f);
+    float bottom = worldBounds_.top  + worldBounds_.height - (aabb.height * 0.5f);
 
     if (pos.x < left)   pos.x = left;
     if (pos.x > right)  pos.x = right;
