@@ -22,3 +22,5 @@ Makefile
 
 # OS
 .DS_Store
+/.vs
+/CMakeSettings.json

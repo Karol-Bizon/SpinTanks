@@ -3,6 +3,7 @@
 
 static constexpr float PI = 3.14159265f;
 
+//definicja czolgu, jego rozmiar chyba nie rowna sie rozmiarowi tekstury --- obserwowalne podczas gry -krzys
 Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture)
 : controlKey_(controlKey)
 {
@@ -31,21 +32,22 @@ sf::Vector2f Tank::getPosition() const {
 float Tank::getAngleDeg() const {
     return angleDeg_;
 }
-
+//granice swiata wiadome dla czolgow
 void Tank::setWorldBounds(const sf::FloatRect& bounds) {
     worldBounds_ = bounds;
 }
-
+//collision box czolgu??
 sf::FloatRect Tank::getAABB() const {
     return body_.getGlobalBounds();
 }
-
+//wektor do strzelania
 sf::Vector2f Tank::getForward() const {
     float rad = angleDeg_ * PI / 180.f;
     return { std::cos(rad), std::sin(rad) };
 }
 
 void Tank::update(float dt) {
+    //dlaczego jest 2x to samo??? -krzys
     if (!movingForward_) {
         angleDeg_ += turnDirection_ * turnSpeed_ * dt;
     }

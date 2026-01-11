@@ -4,7 +4,7 @@ static constexpr float WORLD_WIDTH  = 1000.f;
 static constexpr float WORLD_HEIGHT = 1000.f;
 static constexpr float START_POSITION_FRAC = 0.15f;
 
-
+//definicje sterowania
 static const sf::Keyboard::Key MOVE_KEYS[4] = {
     sf::Keyboard::Space,
     sf::Keyboard::Enter,
@@ -26,6 +26,7 @@ static const sf::Keyboard::Key TANK_KEYS[4] = {
     sf::Keyboard::Up
 };
 
+//pozycje poczatkowe czolgow
 static const sf::Vector2f TANK_POSITIONS[4] = {
     {START_POSITION_FRAC*WORLD_WIDTH        , START_POSITION_FRAC*WORLD_HEIGHT},
     {(1.f - START_POSITION_FRAC)*WORLD_WIDTH, (1.f - START_POSITION_FRAC)*WORLD_HEIGHT},
@@ -49,7 +50,7 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
   builtBlocks_(0),
   editorEnabled_(true)
 {   
-    
+    //fps
     window_.setFramerateLimit(60);
 
      if (!backgroundTex_.loadFromFile("graphics/background.png")) {
@@ -66,9 +67,10 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
     if (!fireTex_.loadFromFile("graphics/fire.png")) {
         //
     }
-    
+    //upewniamy sie co do ilosci czolgow
     tankCount = std::clamp(tankCount, std::size_t{1}, std::size_t{4});
 
+    //chyba ladujemy tekstury czolgow
     for (std::size_t i = 0; i < tankCount; ++i) {
         if (!tankTex_[i].loadFromFile(TANK_FILES[i])) {
             //
@@ -76,13 +78,15 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
     }
 
     tanks_.reserve(tankCount);
-
+    //granice swiata?
     const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
 
+    //spawn czolgow
     for (std::size_t i = 0; i < tankCount; ++i) {
         tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i], tankTex_[i]);
         tanks_.back().setWorldBounds(world);
     }
+
 
     if (!map_.loadAtlasFromFiles({
         "graphics/block.png",
@@ -131,10 +135,10 @@ void Game::update(float dt) {
     sf::Vector2f before = tank.getPosition();
     float beforeAng = tank.getAngleDeg();
 
-    tank.update(dt);
+    tank.update(dt); //ruch czolgow
 
     if (tankHitsBlocks(tank)) {
-        tank.setPosition(before); 
+        tank.setPosition(before); //powinno cofac czolgi po kolizji z granica mapy, dziala tu, ale gorzej dziala przy kolizji z blokami
     }
 }
 
@@ -143,10 +147,10 @@ void Game::update(float dt) {
     const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
     for (auto& p : projectiles_) {
         if (!world.contains(p.getPosition()))
-            p.kill();
+            p.kill(); //zabijanie particlesow poza swiatem
         sf::Vector2u cell;
         if (projectileHitCell(p, cell)) {
-            damageBlockAt(cell.x, cell.y);
+            damageBlockAt(cell.x, cell.y); //uszkadzanie blokow
             p.kill();
         }
     }
@@ -227,6 +231,8 @@ void Game::paintAtMouse(bool erase) {
     }
 }
 
+
+//strzelanie
 void Game::handleShootInput(const sf::Event& e) {
     if (e.type != sf::Event::KeyPressed) return;
 
@@ -248,6 +254,7 @@ void Game::spawnProjectile(const Tank& tank) {
 }
 
 
+//tu trza troche pogrzebac
 bool Game::tankHitsBlocks(const Tank& t) const {
     sf::FloatRect box = t.getAABB();
 
