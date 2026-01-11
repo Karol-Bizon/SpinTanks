@@ -15,4 +15,18 @@ void Projectile::update(float dt) {
 
 void Projectile::draw(sf::RenderTarget& target) const {
     target.draw(sprite_);
+
+    //DEBUG - pokazuje collider pocisku (ogromnie wielki byl oryginalnie XD)
+    sf::FloatRect box = sprite_.getGlobalBounds();
+    sf::RectangleShape debug;
+    debug.setPosition({ box.left, box.top });
+    debug.setSize({ box.width, box.height });
+    debug.setFillColor(sf::Color::Transparent);
+    debug.setOutlineThickness(1.f);
+    debug.setOutlineColor(sf::Color::Green);
+    target.draw(debug);
+}
+//wiemy kto strzela
+void Projectile::setOwner(int tankn) {
+    owner_ = tankn;
 }

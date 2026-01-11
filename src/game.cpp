@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include<iostream>
 
 static constexpr float WORLD_WIDTH  = 1000.f;
 static constexpr float WORLD_HEIGHT = 1000.f;
@@ -84,6 +85,11 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
     //spawn czolgow
     for (std::size_t i = 0; i < tankCount; ++i) {
         tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i], tankTex_[i]);
+
+        //dodalem ze wiemy ktory czolg jest ktory bo maja ID od 1 do 4 ! -kg
+        Tank& t = tanks_.back();
+        t.setID(i+1);
+        //t.setFont(); //pozniej trza dodac zeby byl font!!! aka plik z fontem danym
         tanks_.back().setWorldBounds(world);
     }
 
@@ -152,6 +158,21 @@ void Game::update(float dt) {
         if (projectileHitCell(p, cell)) {
             damageBlockAt(cell.x, cell.y); //uszkadzanie blokow
             p.kill();
+        }
+        
+
+        ///damage ! - kg
+        for (auto& p : projectiles_) {
+            if (!p.isAlive()) continue;
+
+            for (auto& t : tanks_) {
+                if (!t.isAlive()) continue;
+                if (p.getOwner() == t.getID()) continue; //czy nie strzelamy sami do siebie (NOTE: czolg ma ID, projectile ma OWNER)
+                if (p.getAABB().intersects(t.getAABB())) {
+                    projectileHitTank(p, t);
+                    break;
+                }
+            }
         }
     }
 
@@ -244,6 +265,12 @@ void Game::handleShootInput(const sf::Event& e) {
 }
 
 void Game::spawnProjectile(const Tank& tank) {
+    
+    //WAZNE: sprawdzamy czy czolg zyje
+    if (!tank.isAlive()) {
+        return;
+    }
+
     sf::Vector2f forward = tank.getForward();
     sf::Vector2f start = tank.getPosition() + forward * 40.f;
 
@@ -251,6 +278,11 @@ void Game::spawnProjectile(const Tank& tank) {
     sf::Vector2f vel = forward * bulletSpeed;
 
     projectiles_.emplace_back(fireTex_, start, vel);
+    
+    //wiemy przez kogo wystrzelony pocisk
+    Tank k = tank;
+    projectiles_.back().setOwner(k.getID());
+    //std::cout << "Pocisk ide:" << k.getID()<<"<T P>" << projectiles_.back().getOwner()<< std::endl; //debug - dziala, pociski maja dobre id
 }
 
 
@@ -308,4 +340,12 @@ void Game::damageBlockAt(unsigned x, unsigned y) {
         map_.set(x, y, 0);
         if (builtBlocks_ > 0) builtBlocks_--;
     }
+}
+
+
+//obrazenia
+void Game::projectileHitTank(Projectile& p, Tank& t) {
+    float DAMAGE = 7.7f;
+    t.takeDamage(DAMAGE);
+    p.kill();
 }

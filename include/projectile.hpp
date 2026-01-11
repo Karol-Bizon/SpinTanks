@@ -10,6 +10,8 @@ public:
 
     bool isAlive() const { return alive_; }
     void kill() { alive_ = false; }
+    void setOwner(int tankn);
+    int getOwner() { return owner_; }
 
     sf::FloatRect getAABB() const { return sprite_.getGlobalBounds(); }
     sf::Vector2f getPosition() const { return sprite_.getPosition(); }
@@ -19,4 +21,5 @@ private:
     sf::Sprite sprite_;
     sf::Vector2f vel_;
     bool alive_ = true;
+    int owner_ = 0;
 };

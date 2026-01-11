@@ -29,6 +29,8 @@ private:
     bool projectileHitCell(const Projectile& p, sf::Vector2u& outCell) const;
     void damageBlockAt(unsigned x, unsigned y);
 
+    void projectileHitTank(Projectile& p, Tank& t);
+
 private:
     sf::RenderWindow window_;
     sf::Clock clock_;
