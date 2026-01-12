@@ -5,6 +5,7 @@
 #include "tank.hpp"
 #include "tilemap.hpp"
 #include "projectile.hpp"
+#include "powerUPPS.hpp"
 
 class Game {
 public:
@@ -32,6 +33,8 @@ private:
 
     void projectileHitTank(Projectile& p, Tank& t);
 
+    void tankHitPowerupp(Tank& t, PowerUP& up);
+
 private:
     sf::RenderWindow window_;
     sf::Clock clock_;
@@ -43,8 +46,11 @@ private:
 
     sf::Texture fireTex_;
 
+    sf::Texture poweruppTex_[2];
+
     std::vector<Tank> tanks_;
     std::vector<Projectile> projectiles_;
+    std::vector<PowerUP> powerupps_;
 
     TileMap map_;
     TileMap::TileId currentBrush_ = 1; 

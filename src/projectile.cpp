@@ -30,3 +30,7 @@ void Projectile::draw(sf::RenderTarget& target) const {
 void Projectile::setOwner(int tankn) {
     owner_ = tankn;
 }
+
+void Projectile::setDMG(float ile) {
+    damage_ = ile;
+}

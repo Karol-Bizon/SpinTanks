@@ -10,7 +10,7 @@ add_executable(spinTanks
     src/tank.cpp
     src/tilemap.cpp
     src/projectile.cpp
-)
+ "include/powerUPPS.hpp" "src/powerUPPS.cpp")
 
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 

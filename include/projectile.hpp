@@ -12,6 +12,8 @@ public:
     void kill() { alive_ = false; }
     void setOwner(int tankn);
     int getOwner() { return owner_; }
+    float getDMG() { return damage_; }
+    void setDMG(float ile);
 
     sf::FloatRect getAABB() const { return sprite_.getGlobalBounds(); }
     sf::Vector2f getPosition() const { return sprite_.getPosition(); }
@@ -22,4 +24,5 @@ private:
     sf::Vector2f vel_;
     bool alive_ = true;
     int owner_ = 0;
+    float damage_ = 7.7f;
 };

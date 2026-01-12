@@ -33,6 +33,8 @@ public:
     float getHp() const { return hp_; }
     float getMaxHp() const { return maxHp_; }
     void setMaxHp(float m) { maxHp_ = m; if (hp_ > maxHp_) hp_ = maxHp_; }
+    float getDMG() { return DMG_; }
+    void setDMG(float ile);
 
     //pasek hp
     void setFont(const sf::Font& font);
@@ -61,6 +63,7 @@ private:
     float turnSpeed_ = 30.f; // za szybko do testow strzelania, zmieniam na 30.f, bylo 180.f
     float moveSpeed_ = 180.f;
     float turnDirection_ = 1.f;
+    float DMG_ = 7.7f;
 
     bool movingForward_ = false;
     

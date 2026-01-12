@@ -265,3 +265,7 @@ void Tank::Reload() {
     isReloaded_ = false;
     reloadCLK_.restart();
 }
+
+void Tank::setDMG(float ile) {
+    DMG_ = ile;
+}

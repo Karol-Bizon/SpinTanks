@@ -42,6 +42,13 @@ static const char* TANK_FILES[4] = {
     "graphics/tank4.png"
 };
 
+//tekstury powerupow
+static const char* POWERUP_FILES[2] = {
+    "graphics/generic_powerup.png",
+    "graphics/generic_powerup_inv.png"
+};
+int upTEX_COUNT = 2; // ile tekstur powerupp
+
 Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
 : window_(sf::VideoMode(
       static_cast<unsigned>(WORLD_WIDTH),
@@ -68,6 +75,14 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
     if (!fireTex_.loadFromFile("graphics/fire.png")) {
         //
     }
+
+    //ladujemy tekstury powerupow
+    for (int i = 0; i < upTEX_COUNT; i++) {
+        if (!poweruppTex_[i].loadFromFile(POWERUP_FILES[i])) {
+            //
+        }
+    }
+
     //upewniamy sie co do ilosci czolgow
     tankCount = std::clamp(tankCount, std::size_t{1}, std::size_t{4});
 
@@ -79,7 +94,7 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
     }
 
     tanks_.reserve(tankCount);
-    //granice swiata?
+    //granice swiata
     const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
 
     //spawn czolgow
@@ -91,6 +106,14 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
         t.setID(i+1);
         //t.setFont(); //pozniej trza dodac zeby byl font!!! aka plik z fontem danym
         tanks_.back().setWorldBounds(world);
+    }
+
+    //TESTOWY spawn powerupp x2 ||| pomysl taki zeby byly od poczatku ale dopiero po jakims czasie wchodza na scene?
+    powerupps_.reserve(2);
+    for (int i = 0; i < 2; i++) {
+        powerupps_.emplace_back(poweruppTex_[i], sf::Vector2f{ 500.f, 500.f });
+        powerupps_.back().placeRandom(world);
+        powerupps_.back().setTexture(poweruppTex_[0]); // tak mozna ustawic teksture jaka sie chce powerupps
     }
 
 
@@ -151,6 +174,7 @@ void Game::update(float dt) {
     for (auto& p : projectiles_)
         p.update(dt);
     const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
+
     for (auto& p : projectiles_) {
         if (!world.contains(p.getPosition()))
             p.kill(); //zabijanie particlesow poza swiatem
@@ -159,11 +183,9 @@ void Game::update(float dt) {
             damageBlockAt(cell.x, cell.y); //uszkadzanie blokow
             p.kill();
         }
-        
-
         ///damage ! - kg
         for (auto& p : projectiles_) {
-            if (!p.isAlive()) continue;
+            if (!p.isAlive()) continue; // moze ma byc break a nie continue?
 
             for (auto& t : tanks_) {
                 if (!t.isAlive()) continue;
@@ -175,6 +197,33 @@ void Game::update(float dt) {
             }
         }
     }
+    ///POWERUPSS ! - kg
+    for (auto& up : powerupps_) {
+        if (!up.isAlive()) continue;
+
+        for (auto& t : tanks_) {
+            if (!t.isAlive()) continue;
+            //std::cout << "testujemy po czolgach!" << std::endl;
+            if (up.getAABB().intersects(t.getAABB())) {
+                tankHitPowerupp(t, up);
+                std::cout << "tank hit powerup!" << std::endl;
+                break;
+            }
+        }
+    }
+
+    //update powerupów - kg
+    for (auto& pu : powerupps_) {
+        pu.update(dt);
+    }
+
+    //zabijamy analogicznie
+    powerupps_.erase(
+        std::remove_if(powerupps_.begin(), powerupps_.end(),
+            [](const PowerUP& p) { return !p.isAlive(); }),
+        powerupps_.end()
+    );
+
 
     projectiles_.erase(
         std::remove_if(projectiles_.begin(), projectiles_.end(),
@@ -189,6 +238,10 @@ void Game::render() {
     window_.draw(backgroundSprite_);
 
     window_.draw(map_);
+
+    //rysowanie powerupps
+    for (auto& pu : powerupps_)
+        pu.draw(window_);
 
     for (auto& tank : tanks_)
         tank.draw(window_);
@@ -285,8 +338,9 @@ void Game::spawnProjectile(Tank& tank) {
 
     projectiles_.emplace_back(fireTex_, start, vel);
     
-    //wiemy przez kogo wystrzelony pocisk
+    //wiemy przez kogo wystrzelony pocisk i ile dmg ma zadac
     projectiles_.back().setOwner(tank.getID());
+    projectiles_.back().setDMG(tank.getDMG());
     //std::cout << "Pocisk ide:" << k.getID()<<"<T P>" << projectiles_.back().getOwner()<< std::endl; //debug - dziala, pociski maja dobre id
 
     //po strzale - przeladowujemy
@@ -353,7 +407,19 @@ void Game::damageBlockAt(unsigned x, unsigned y) {
 
 //obrazenia
 void Game::projectileHitTank(Projectile& p, Tank& t) {
-    float DAMAGE = 7.7f;
+    float DAMAGE = p.getDMG();
     t.takeDamage(DAMAGE);
     p.kill();
+}
+
+//powerupp
+void Game::tankHitPowerupp(Tank& t, PowerUP& up) {
+    Bonuses b = up.getBonuses();
+    up.kill();
+
+    //leczenie - pierwszy test
+    t.takeDamage(-b.healBONUS_);
+
+    t.setDMG(b.dmgBONUS);
+
 }
