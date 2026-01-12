@@ -1,5 +1,12 @@
 #include "game.hpp"
 #include<iostream>
+#include <random>
+
+int randomInt(int min, int max) {
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> dist(min, max);
+    return dist(rng);
+}
 
 static constexpr float WORLD_WIDTH  = 1000.f;
 static constexpr float WORLD_HEIGHT = 1000.f;
@@ -43,11 +50,16 @@ static const char* TANK_FILES[4] = {
 };
 
 //tekstury powerupow
-static const char* POWERUP_FILES[2] = {
+static const char* POWERUP_FILES[7] = {
     "graphics/generic_powerup.png",
-    "graphics/generic_powerup_inv.png"
+    "graphics/generic_powerup_inv.png",
+    "graphics/generic_powerup_heal.png",
+    "graphics/generic_powerup_moreDMG.png",
+    "graphics/generic_powerup_SPED.png",
+    "graphics/generic_powerup_moreHP.png",
+    "graphics/generic_powerup_fastRELOAD.png"
 };
-int upTEX_COUNT = 2; // ile tekstur powerupp
+int upTEX_COUNT = 7; // ile tekstur powerupp
 
 Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
 : window_(sf::VideoMode(
@@ -108,13 +120,7 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
         tanks_.back().setWorldBounds(world);
     }
 
-    //TESTOWY spawn powerupp x2 ||| pomysl taki zeby byly od poczatku ale dopiero po jakims czasie wchodza na scene?
-    powerupps_.reserve(2);
-    for (int i = 0; i < 2; i++) {
-        powerupps_.emplace_back(poweruppTex_[i], sf::Vector2f{ 500.f, 500.f });
-        powerupps_.back().placeRandom(world);
-        powerupps_.back().setTexture(poweruppTex_[0]); // tak mozna ustawic teksture jaka sie chce powerupps
-    }
+    //stad usunalem do poweruppow dawny kod - kg
 
 
     if (!map_.loadAtlasFromFiles({
@@ -211,8 +217,9 @@ void Game::update(float dt) {
             }
         }
     }
-
-    //update powerupów - kg
+    
+    //update i spawn powerupów - kg
+    spawnPowerupps();
     for (auto& pu : powerupps_) {
         pu.update(dt);
     }
@@ -416,10 +423,87 @@ void Game::projectileHitTank(Projectile& p, Tank& t) {
 void Game::tankHitPowerupp(Tank& t, PowerUP& up) {
     Bonuses b = up.getBonuses();
     up.kill();
+    t.PowerrUpSTART();
+    //ustawiamy po kolei rzeczy z powerupa:
 
-    //leczenie - pierwszy test
-    t.takeDamage(-b.healBONUS_);
+    //damage - dziala jako mnoznik!
+    if (b.dmgBONUS != 0.f) { t.setDMG(t.getDMG() * b.dmgBONUS); }
 
-    t.setDMG(b.dmgBONUS);
+    //healing
+    if (b.healBONUS_ != 0.f) { t.takeDamage(-b.healBONUS_); }
 
+    //maxHP
+    if (b.maxhpBONUS_ != 0.f) {
+        t.setMaxHp(b.maxhpBONUS_);
+        t.takeDamage(-77777.f);
+    }
+
+    //reload time
+    if (b.reloadBONUS_ != 0.f) { t.setReloadTime(b.reloadBONUS_); }
+
+    //rotacja sped
+    if (b.rotspedBONUS_ != 0.f) { t.setTurnSpeed(b.rotspedBONUS_); }
+
+    //ruchsped
+    if (b.spedBONUS_ != 0.f) { t.setMoveSpeed(b.spedBONUS_); }
+
+}
+//power upp spawn - kg
+void Game::spawnPowerupps() {
+    if (PowerUp_cooldown_.getElapsedTime().asSeconds() >= PowerUp_cooldownTIME_) {
+        canSpawnPowerUp_ = true;
+    }
+    if (!canSpawnPowerUp_) {
+        return;
+    }
+    //jesli mozemy
+    const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
+
+
+    //TESTOWY spawn powerupp co 20s
+    //wybieramy pomiedzy 3 klasami power up: heal, dmg, speed
+    int ktory = randomInt(1,5); // haha zaczynam liczyc od jedynki >:)
+
+
+    powerupps_.reserve(1);
+
+    //tu sie dodaje powerupy
+    switch (ktory){
+    case 1: //heal
+        powerupps_.emplace_back(poweruppTex_[2], sf::Vector2f{ 500.f, 500.f });
+        powerupps_.back().placeRandom(world);
+        powerupps_.back().setBonuses(0.f, 0.f, 20.f, 0.f, 0.f, 0.f);
+        break;
+    case 2: //dmgboost
+        powerupps_.emplace_back(poweruppTex_[3], sf::Vector2f{ 500.f, 500.f });
+        powerupps_.back().placeRandom(world);
+        powerupps_.back().setBonuses(4.f, 0.f, 0.f, 0.f, 0.f, 0.f);
+        break;
+    case 3: //speed
+        powerupps_.emplace_back(poweruppTex_[4], sf::Vector2f{ 500.f, 500.f });
+        powerupps_.back().placeRandom(world);
+        powerupps_.back().setBonuses(0.f, 0.f, 0.f, 0.f, 60.f, 360.f);
+        break;
+    case 4: //maxhp
+        powerupps_.emplace_back(poweruppTex_[5], sf::Vector2f{ 500.f, 500.f });
+        powerupps_.back().placeRandom(world);
+        powerupps_.back().setBonuses(0.f, 0.f, 0.f, 400.f, 0.f, 0.f);
+        break;
+    case 5: //reloadspeed
+        powerupps_.emplace_back(poweruppTex_[6], sf::Vector2f{ 500.f, 500.f });
+        powerupps_.back().placeRandom(world);
+        powerupps_.back().setBonuses(0.f, 0.2f, 0.f, 0.f, 0.f, 0.f);
+        break;
+    default:
+        break;
+    }
+
+
+    //for (int i = 0; i < 2; i++) {
+    //    powerupps_.emplace_back(poweruppTex_[i], sf::Vector2f{ 500.f, 500.f });
+    //    powerupps_.back().placeRandom(world);
+    //    powerupps_.back().setTexture(poweruppTex_[0]); // tak mozna ustawic teksture jaka sie chce powerupps
+    //}
+    canSpawnPowerUp_ = false;
+    PowerUp_cooldown_.restart();
 }

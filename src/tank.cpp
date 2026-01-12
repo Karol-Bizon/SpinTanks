@@ -112,7 +112,12 @@ void Tank::setID(int ide) {
 void Tank::update(float dt) {
 
     //moj dodatek kg
-    //naprawa koloru  
+    //naprawa koloru
+
+    if (isPoweredUP_) {
+        body_.setFillColor(sf::Color(15, 250, 15));
+    }
+
     if (recentlyDamaged_) {
         if (damageClock_.getElapsedTime().asSeconds() > damageFlashDuration_) {
             recentlyDamaged_ = false;
@@ -181,7 +186,8 @@ void Tank::update(float dt) {
     }
     //std::cout << reloadCLK_.getElapsedTime().asSeconds() << std::endl; //debug timera reloada
 
-
+    //sprawdzamy i jezeli po timerze, to restorujemy
+    RestoreDefaults();
 
 
     if (!movingForward_) {
@@ -268,4 +274,26 @@ void Tank::Reload() {
 
 void Tank::setDMG(float ile) {
     DMG_ = ile;
+}
+
+//logika czasowego dzialania powerup
+void Tank::PowerrUpSTART() {
+    isPoweredUP_ = true;
+    PowerUpCLK_.restart();
+    //body_.setFillColor(sf::Color(167, 250, 246)); //kolor bycia powerupowanym
+}
+
+void Tank::RestoreDefaults() {
+    if (isPoweredUP_) {
+        if (PowerUpCLK_.getElapsedTime().asSeconds() >= powerUpDuration_) {
+            isPoweredUP_ = false;
+
+            DMG_ = baza_.BASE_dmg_;
+            reloadDuration_ = baza_.BASE_reload_;
+            maxHp_ = baza_.BASE_maxHP_;
+            turnSpeed_ = baza_.BASE_rotsped_;
+            moveSpeed_ = baza_.BASE_sped_;
+            body_.setFillColor(originalColor_);
+        }
+    }
 }

@@ -1,6 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+
+struct baseParameters {
+    //PODSTAWOWE PARAMETRY CZOLGU
+    float BASE_dmg_ = 7.7f;
+    float BASE_reload_ = 0.5f;
+    float BASE_maxHP_ = 100.f;
+    float BASE_rotsped_ = 30.f;
+    float BASE_sped_ = 180.f;
+};
+
 class Tank {
 public:
     Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture);
@@ -44,12 +54,20 @@ public:
     bool isReloaded() const { return isReloaded_; }
     void Reload();
 
+
     void setReloadColor(const sf::Color& c) { reloadColor_ = c; reloadBarFront_.setFillColor(reloadColor_); }
     void setReloadBarSize(float w, float h) {
         reloadBarWidth_ = w; reloadBarHeight_ = h;
         reloadBarBack_.setSize({ reloadBarWidth_, reloadBarHeight_ });
         reloadBarFront_.setSize({ reloadBarWidth_, reloadBarHeight_ });
     }
+
+    //rzeczy przywracanie podstawowych wartosci
+    //funkcja odpalajaca clock i 
+    void PowerrUpSTART();
+    void RestoreDefaults();
+
+    //rzeczy ktore sie da ustawic: move speed, turn speed, maxhp, dmg, reload time (WSZYSTKO yipii) - kg
 
 private:
     void flipRotationDirection();
@@ -58,7 +76,6 @@ private:
 private:
     sf::RectangleShape body_;
     sf::Keyboard::Key controlKey_;
-
     float angleDeg_ = 0.f;
     float turnSpeed_ = 30.f; // za szybko do testow strzelania, zmieniam na 30.f, bylo 180.f
     float moveSpeed_ = 180.f;
@@ -109,4 +126,10 @@ private:
     float reloadBarHeight_ = 6.f;
     float reloadBarOffsetY_ = 7.f; //odleg³oœæ od œrodka czo³gu (np. poni¿ej HP)
     sf::Color reloadColor_ = sf::Color(200, 200, 50); //domyœlny kolor (zolty)
+
+    //rzeczy reload podstawowych wartosci
+    baseParameters baza_;
+    sf::Clock PowerUpCLK_;
+    float powerUpDuration_ = 10.f; //10s
+    bool isPoweredUP_ = false;
 };

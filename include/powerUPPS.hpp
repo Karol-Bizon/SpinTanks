@@ -3,7 +3,7 @@
 
 struct Bonuses {
     //co moga robic power upp?: przeladowanie, leczenie, max_hp + leczenie, szybkosc ruchu/obrotu
-    float dmgBONUS = 27.f;
+    float dmgBONUS = 27.f; ///dziala jako mnoznik!
     float reloadBONUS_ = 0.1f;
     float healBONUS_ = 10.f;
     float maxhpBONUS_ = 240.f;

@@ -34,6 +34,7 @@ private:
     void projectileHitTank(Projectile& p, Tank& t);
 
     void tankHitPowerupp(Tank& t, PowerUP& up);
+    void spawnPowerupps();
 
 private:
     sf::RenderWindow window_;
@@ -46,7 +47,10 @@ private:
 
     sf::Texture fireTex_;
 
-    sf::Texture poweruppTex_[2];
+    sf::Texture poweruppTex_[7];
+    sf::Clock PowerUp_cooldown_;
+    float PowerUp_cooldownTIME_ = 17.f;
+    bool canSpawnPowerUp_ = true;
 
     std::vector<Tank> tanks_;
     std::vector<Projectile> projectiles_;
