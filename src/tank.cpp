@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <sstream>
+#include <iostream>
 
 static constexpr float PI = 3.14159265f;
 
@@ -14,6 +15,7 @@ Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Textur
     body_.setOrigin(body_.getSize() * 0.5f);
     body_.setPosition(position);
 
+    //rzeczy pasek hp - kg
     //HP bar background
     hpBarBack_.setSize({ hpBarWidth_, hpBarHeight_ });
     hpBarBack_.setOrigin(hpBarWidth_ / 2.f, hpBarHeight_ / 2.f);
@@ -27,6 +29,17 @@ Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Textur
     //hp text (font must byæ ustawiony przez setFont jeœli chcesz tekst)
     hpText_.setCharacterSize(12);
     hpText_.setFillColor(sf::Color::White);
+
+    //rzeczy przeladowanie - kg
+    //reload bar background
+    reloadBarBack_.setSize({ reloadBarWidth_, reloadBarHeight_ });
+    reloadBarBack_.setOrigin(reloadBarWidth_ / 2.f, reloadBarHeight_ / 2.f);
+    reloadBarBack_.setFillColor(sf::Color(50, 50, 50, 200));
+
+    //reload bar front
+    reloadBarFront_.setSize({ reloadBarWidth_, reloadBarHeight_ });
+    reloadBarFront_.setOrigin(0.f, reloadBarHeight_ / 2.f); //origin po lewej
+    reloadBarFront_.setFillColor(reloadColor_);
 }
 
 void Tank::setFont(const sf::Font& font) {
@@ -106,7 +119,7 @@ void Tank::update(float dt) {
             body_.setFillColor(originalColor_);
         }
     }
-    // HP bar position (nad czo³giem)
+    //HP bar position (nad czo³giem)
     sf::Vector2f pos = body_.getPosition();
     float barX = pos.x;
     float barY = pos.y - (body_.getSize().y / 2.f) - hpBarOffsetY_;
@@ -136,6 +149,38 @@ void Tank::update(float dt) {
     if (!isAlive()) {
         return; // tu by mozna moze jakas teksture ustawic czolgu?? albo zeby znikal??
     }
+
+    //ustawienie paska przeladowania - kg
+    float reloadBarX = pos.x;
+    float reloadBarY = pos.y - (body_.getSize().y / 2.f) - hpBarOffsetY_ + reloadBarOffsetY_; // dopasuj
+    reloadBarBack_.setPosition(reloadBarX, reloadBarY);
+
+    //przeladowanie: 1 = gotowy, <1 = w trakcie
+    float reloadRatio = 1.f;
+    if (!isReloaded_) {
+        float elapsed = reloadCLK_.getElapsedTime().asSeconds();
+        if (reloadDuration_ <= 0.f) reloadRatio = 1.f;
+        else reloadRatio = std::clamp(elapsed / reloadDuration_, 0.f, 1.f);
+
+        if (elapsed >= reloadDuration_) {
+            isReloaded_ = true;
+        }
+    }
+
+    //ustaw front: origin po lewej, szerokoœæ proporcjonalna do ratio
+    reloadBarFront_.setOrigin(0.f, reloadBarHeight_ / 2.f);
+    reloadBarFront_.setSize({ reloadBarWidth_ * reloadRatio, reloadBarHeight_ });
+    reloadBarFront_.setPosition(reloadBarX - reloadBarWidth_ / 2.f, reloadBarY);
+
+
+    //sprawdzamy czy zakoñczy³o siê prze³adowanie
+    if (!isReloaded_) {
+        if (reloadCLK_.getElapsedTime().asSeconds() >= reloadDuration_) {
+            isReloaded_ = true;
+        }
+    }
+    //std::cout << reloadCLK_.getElapsedTime().asSeconds() << std::endl; //debug timera reloada
+
 
 
 
@@ -183,6 +228,8 @@ void Tank::draw(sf::RenderTarget& target) const {
     target.draw(body_);
     target.draw(hpBarBack_);
     target.draw(hpBarFront_);
+    target.draw(reloadBarBack_);
+    target.draw(reloadBarFront_);
     if (font_) target.draw(hpText_);
 
     //DEBUGG ONLY // jak chcecie to usuncie, narazie mi pasuje bo pokazuje co sie dzieje -- podobny hitbox dodalem w pocisku -kg
@@ -207,4 +254,14 @@ void Tank::handleEvent(const sf::Event& e) {
         movingForward_ = false;
         flipRotationDirection();
     }
+}
+
+//logika przeladowania - kg
+void Tank::setReloadTime(float ile) {
+    reloadDuration_ = std::max(0.f, ile);
+}
+
+void Tank::Reload() {
+    isReloaded_ = false;
+    reloadCLK_.restart();
 }

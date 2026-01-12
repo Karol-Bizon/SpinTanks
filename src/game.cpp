@@ -264,10 +264,16 @@ void Game::handleShootInput(const sf::Event& e) {
     }
 }
 
-void Game::spawnProjectile(const Tank& tank) {
+void Game::spawnProjectile(Tank& tank) {
     
     //WAZNE: sprawdzamy czy czolg zyje
     if (!tank.isAlive()) {
+        return;
+    }
+
+    //TEZ WAZNE: sprawdzamy czy czolg przeladowany
+    //Tank k = tank;
+    if (!tank.isReloaded()) {
         return;
     }
 
@@ -280,9 +286,11 @@ void Game::spawnProjectile(const Tank& tank) {
     projectiles_.emplace_back(fireTex_, start, vel);
     
     //wiemy przez kogo wystrzelony pocisk
-    Tank k = tank;
-    projectiles_.back().setOwner(k.getID());
+    projectiles_.back().setOwner(tank.getID());
     //std::cout << "Pocisk ide:" << k.getID()<<"<T P>" << projectiles_.back().getOwner()<< std::endl; //debug - dziala, pociski maja dobre id
+
+    //po strzale - przeladowujemy
+    tank.Reload();
 }
 
 

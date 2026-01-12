@@ -23,7 +23,8 @@ private:
     void paintAtMouse(bool erase);
 
     void handleShootInput(const sf::Event& e);
-    void spawnProjectile(const Tank& tank);
+    //void spawnProjectile(const Tank& tank); nie bedzie zodyn konstantyn, bo reload nie dziala -kg
+    void spawnProjectile(Tank& tank);
 
     bool tankHitsBlocks(const Tank& t) const;
     bool projectileHitCell(const Projectile& p, sf::Vector2u& outCell) const;

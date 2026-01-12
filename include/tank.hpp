@@ -37,6 +37,18 @@ public:
     //pasek hp
     void setFont(const sf::Font& font);
 
+    //rzeczy zwiazane z RELOAD - kg
+    void setReloadTime(float ile);
+    bool isReloaded() const { return isReloaded_; }
+    void Reload();
+
+    void setReloadColor(const sf::Color& c) { reloadColor_ = c; reloadBarFront_.setFillColor(reloadColor_); }
+    void setReloadBarSize(float w, float h) {
+        reloadBarWidth_ = w; reloadBarHeight_ = h;
+        reloadBarBack_.setSize({ reloadBarWidth_, reloadBarHeight_ });
+        reloadBarFront_.setSize({ reloadBarWidth_, reloadBarHeight_ });
+    }
+
 private:
     void flipRotationDirection();
     void clampToWorld();
@@ -55,6 +67,7 @@ private:
 
     sf::FloatRect worldBounds_{0.f, 0.f, -1.f, -1.f};
 
+    //dodatek hp - kg
     //id
     int id_ = 0;
 
@@ -80,4 +93,17 @@ private:
     float damageFlashDuration_ = 0.14f;
     bool recentlyDamaged_ = false;
     sf::Color originalColor_ = sf::Color::White;
+
+    /// reload logika - kg
+    bool isReloaded_ = true;
+    sf::Clock reloadCLK_;
+    float reloadDuration_ = 0.5f;
+
+    //pasek przeladowania
+    sf::RectangleShape reloadBarBack_;
+    sf::RectangleShape reloadBarFront_;
+    float reloadBarWidth_ = 48.f;
+    float reloadBarHeight_ = 6.f;
+    float reloadBarOffsetY_ = 7.f; //odleg³oœæ od œrodka czo³gu (np. poni¿ej HP)
+    sf::Color reloadColor_ = sf::Color(200, 200, 50); //domyœlny kolor (zolty)
 };
