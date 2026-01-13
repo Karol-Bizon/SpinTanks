@@ -26,7 +26,7 @@ Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Textur
     hpBarFront_.setOrigin(hpBarWidth_ / 2.f, hpBarHeight_ / 2.f);
     hpBarFront_.setFillColor(sf::Color::Green);
 
-    //hp text (font must byæ ustawiony przez setFont jeœli chcesz tekst)
+    //hp text (font must byï¿½ ustawiony przez setFont jeï¿½li chcesz tekst)
     hpText_.setCharacterSize(12);
     hpText_.setFillColor(sf::Color::White);
 
@@ -124,7 +124,7 @@ void Tank::update(float dt) {
             body_.setFillColor(originalColor_);
         }
     }
-    //HP bar position (nad czo³giem)
+    //HP bar position (nad czoï¿½giem)
     sf::Vector2f pos = body_.getPosition();
     float barX = pos.x;
     float barY = pos.y - (body_.getSize().y / 2.f) - hpBarOffsetY_;
@@ -134,7 +134,7 @@ void Tank::update(float dt) {
     float ratio = (maxHp_ > 0.f) ? (hp_ / maxHp_) : 0.f;
     ratio = std::clamp(ratio, 0.f, 1.f);
 
-    //Ustaw origin po lewej krawêdzi
+    //Ustaw origin po lewej krawï¿½dzi
     hpBarFront_.setOrigin(0.f, hpBarHeight_ / 2.f);
     hpBarFront_.setSize({ hpBarWidth_ * ratio, hpBarHeight_ });
     hpBarFront_.setPosition(barX - hpBarWidth_ / 2.f, barY);
@@ -172,13 +172,13 @@ void Tank::update(float dt) {
         }
     }
 
-    //ustaw front: origin po lewej, szerokoœæ proporcjonalna do ratio
+    //ustaw front: origin po lewej, szerokoï¿½ï¿½ proporcjonalna do ratio
     reloadBarFront_.setOrigin(0.f, reloadBarHeight_ / 2.f);
     reloadBarFront_.setSize({ reloadBarWidth_ * reloadRatio, reloadBarHeight_ });
     reloadBarFront_.setPosition(reloadBarX - reloadBarWidth_ / 2.f, reloadBarY);
 
 
-    //sprawdzamy czy zakoñczy³o siê prze³adowanie
+    //sprawdzamy czy zakoï¿½czyï¿½o siï¿½ przeï¿½adowanie
     if (!isReloaded_) {
         if (reloadCLK_.getElapsedTime().asSeconds() >= reloadDuration_) {
             isReloaded_ = true;

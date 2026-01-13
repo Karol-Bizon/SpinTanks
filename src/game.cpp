@@ -137,8 +137,6 @@ void Game::run() {
             continue;
         }
 
-        
-
         update(dt);
         render();
     }
@@ -171,42 +169,68 @@ void Game::update(float dt) {
     if (editorEnabled_) return;
 
     for (auto& tank : tanks_) {
-    sf::Vector2f before = tank.getPosition();
-    float beforeAng = tank.getAngleDeg();
+        sf::Vector2f before = tank.getPosition();
 
-    tank.update(dt); //ruch czolgow
+        tank.update(dt);
 
-    if (tankHitsBlocks(tank)) {
-        tank.setPosition(before); //powinno cofac czolgi po kolizji z granica mapy, dziala tu, ale gorzej dziala przy kolizji z blokami
-    }
-}
 
-    for (auto& p : projectiles_)
-        p.update(dt);
-    const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
+        if (tankHitsBlocks(tank)) {
+            sf::Vector2f after = tank.getPosition();
 
-    for (auto& p : projectiles_) {
-        if (!world.contains(p.getPosition()))
-            p.kill(); //zabijanie particlesow poza swiatem
-        sf::Vector2u cell;
-        if (projectileHitCell(p, cell)) {
-            damageBlockAt(cell.x, cell.y); //uszkadzanie blokow
-            p.kill();
+            tank.setPosition({ after.x, before.y });
+            if (tankHitsBlocks(tank)) {
+
+                tank.setPosition({ before.x, after.y });
+                if (tankHitsBlocks(tank)) {
+                    tank.setPosition(before);
+                }
+            }
         }
-        ///damage ! - kg
-        for (auto& p : projectiles_) {
-            if (!p.isAlive()) continue; // moze ma byc break a nie continue?
 
-            for (auto& t : tanks_) {
-                if (!t.isAlive()) continue;
-                if (p.getOwner() == t.getID()) continue; //czy nie strzelamy sami do siebie (NOTE: czolg ma ID, projectile ma OWNER)
-                if (p.getAABB().intersects(t.getAABB())) {
-                    projectileHitTank(p, t);
-                    break;
+        sf::Vector2f afterBlocks = tank.getPosition();
+
+        if (tankHitsOtherTanks(tank)) {
+
+            tank.setPosition({ afterBlocks.x, before.y });
+            if (tankHitsOtherTanks(tank)) {
+
+                tank.setPosition({ before.x, afterBlocks.y });
+                if (tankHitsOtherTanks(tank)) {
+                    tank.setPosition(before);
                 }
             }
         }
     }
+
+
+    for (auto& p : projectiles_)
+            p.update(dt);
+        const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
+
+        for (auto& p : projectiles_) {
+        if (!world.contains(p.getPosition()))
+            p.kill();
+
+        sf::Vector2u cell;
+        if (projectileHitCell(p, cell)) {
+            damageBlockAt(cell.x, cell.y);
+            p.kill();
+        }
+    }
+    for (auto& p : projectiles_) {
+        if (!p.isAlive()) continue;
+
+        for (auto& t : tanks_) {
+            if (!t.isAlive()) continue;
+            if (p.getOwner() == t.getID()) continue;
+
+            if (p.getAABB().intersects(t.getAABB())) {
+                projectileHitTank(p, t);
+                break;
+            }
+        }
+    }
+
     ///POWERUPSS ! - kg
     for (auto& up : powerupps_) {
         if (!up.isAlive()) continue;
@@ -388,6 +412,26 @@ bool Game::tankHitsBlocks(const Tank& t) const {
     }
     return false;
 }
+
+bool Game::tankHitsOtherTanks(const Tank& me) const {
+    if (!me.isAlive()) return false;
+
+    const sf::FloatRect box = me.getAABB();
+
+    for (const auto& t : tanks_) {
+        if (&t == &me) continue;
+        if (!t.isAlive()) continue;
+
+        sf::FloatRect otherRect = t.getAABB();
+
+        if (box.intersects(otherRect)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 
 bool Game::projectileHitCell(const Projectile& p, sf::Vector2u& outCell) const {
     sf::Vector2f center = p.getCenter();

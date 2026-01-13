@@ -41,6 +41,7 @@ private:
     void damageBlockAt(unsigned x, unsigned y);
 
     void projectileHitTank(Projectile& p, Tank& t);
+    bool tankHitsOtherTanks(const Tank& me) const;
 
     void tankHitPowerupp(Tank& t, PowerUP& up);
     void spawnPowerupps();
