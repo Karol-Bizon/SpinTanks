@@ -6,6 +6,7 @@
 #include "tilemap.hpp"
 #include "projectile.hpp"
 #include "powerUPPS.hpp"
+#include "menu.hpp"
 
 enum class GameState {
     MENU,
@@ -15,9 +16,9 @@ enum class GameState {
 
 class Game {
 public:
-    explicit Game(std::size_t tankCount, unsigned maxBuildBlocks);
+    explicit Game();
     void run();
-    unsigned maxBuildBlocks_ = 8;
+    unsigned maxBuildBlocks_ = 100;
     unsigned builtBlocks_ = 0;
     bool editorEnabled_ = true;
 
@@ -25,6 +26,8 @@ private:
     void processEvents();
     void update(float dt);
     void render();
+
+    void startGame(std::size_t tankCount);
 
     void handleEditorInput(const sf::Event& e);
     void paintAtMouse(bool erase);
@@ -43,7 +46,7 @@ private:
     void spawnPowerupps();
 
     GameState state_;
-    void renderMenu();
+    Menu menu_;
 
 private:
     sf::RenderWindow window_;

@@ -21,10 +21,14 @@ static const sf::Keyboard::Key MOVE_KEYS[4] = {
 };
 
 static const sf::Keyboard::Key SHOOT_KEYS[4] = {
-    sf::Keyboard::LShift,
-    sf::Keyboard::RShift,
-    sf::Keyboard::F,
-    sf::Keyboard::RControl
+    // sf::Keyboard::LShift,
+    // sf::Keyboard::RShift,
+    // sf::Keyboard::F,
+    // sf::Keyboard::RControl
+    sf::Keyboard::Space,
+    sf::Keyboard::Enter,
+    sf::Keyboard::W,
+    sf::Keyboard::Up
 };
 
 static const sf::Keyboard::Key TANK_KEYS[4] = {
@@ -61,15 +65,16 @@ static const char* POWERUP_FILES[7] = {
 };
 int upTEX_COUNT = 7; // ile tekstur powerupp
 
-Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
+Game::Game()
 : window_(sf::VideoMode(
       static_cast<unsigned>(WORLD_WIDTH),
       static_cast<unsigned>(WORLD_HEIGHT)),
       "SpinTanks"),
-  maxBuildBlocks_(maxBuildBlocks),
+  maxBuildBlocks_(100),
   builtBlocks_(0),
   editorEnabled_(true),
-  state_(GameState::MENU)
+  state_(GameState::MENU),
+  menu_(WORLD_WIDTH, WORLD_HEIGHT)
 {   
     //fps
     window_.setFramerateLimit(60);
@@ -96,30 +101,7 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
         }
     }
 
-    //upewniamy sie co do ilosci czolgow
-    tankCount = std::clamp(tankCount, std::size_t{1}, std::size_t{4});
-
-    //chyba ladujemy tekstury czolgow
-    for (std::size_t i = 0; i < tankCount; ++i) {
-        if (!tankTex_[i].loadFromFile(TANK_FILES[i])) {
-            //
-        }
-    }
-
-    tanks_.reserve(tankCount);
-    //granice swiata
-    const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
-
-    //spawn czolgow
-    for (std::size_t i = 0; i < tankCount; ++i) {
-        tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i], tankTex_[i]);
-
-        //dodalem ze wiemy ktory czolg jest ktory bo maja ID od 1 do 4 ! -kg
-        Tank& t = tanks_.back();
-        t.setID(i+1);
-        //t.setFont(); //pozniej trza dodac zeby byl font!!! aka plik z fontem danym
-        tanks_.back().setWorldBounds(world);
-    }
+    
 
     //stad usunalem do poweruppow dawny kod - kg
 
@@ -145,9 +127,17 @@ void Game::run() {
         float dt = clock_.restart().asSeconds();
 
         if (state_ == GameState::MENU) {
-            renderMenu();
+
+            menu_.render(window_);
+
+            if (menu_.startRequested()) {
+                startGame(menu_.getPlayerCount());
+                state_ = GameState::PLAYING;
+            }
             continue;
         }
+
+        
 
         update(dt);
         render();
@@ -157,8 +147,15 @@ void Game::run() {
 void Game::processEvents() {
     sf::Event e;
     while (window_.pollEvent(e)) {
+
+        if (state_ == GameState::MENU) {
+            menu_.handleEvent(e);
+            continue;
+        }
+
         if (e.type == sf::Event::Closed)
             window_.close();
+
         if (editorEnabled_) {
             handleEditorInput(e);
         } else {
@@ -515,8 +512,31 @@ void Game::spawnPowerupps() {
     PowerUp_cooldown_.restart();
 }
 
+void Game::startGame(std::size_t tankCount) {
+    
+    //upewniamy sie co do ilosci czolgow
+    tankCount = std::clamp(tankCount, std::size_t{1}, std::size_t{4});
 
-void Game::renderMenu() {
-    window_.clear(sf::Color::Black);
-    window_.display();
+    //chyba ladujemy tekstury czolgow
+    for (std::size_t i = 0; i < tankCount; ++i) {
+        if (!tankTex_[i].loadFromFile(TANK_FILES[i])) {
+            //
+        }
+    }
+
+    tanks_.reserve(tankCount);
+    //granice swiata
+    const sf::FloatRect world{0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT};
+
+    //spawn czolgow
+    for (std::size_t i = 0; i < tankCount; ++i) {
+        tanks_.emplace_back(TANK_POSITIONS[i], TANK_KEYS[i], tankTex_[i]);
+
+        //dodalem ze wiemy ktory czolg jest ktory bo maja ID od 1 do 4 ! -kg
+        Tank& t = tanks_.back();
+        t.setID(i+1);
+        //t.setFont(); //pozniej trza dodac zeby byl font!!! aka plik z fontem danym
+        tanks_.back().setWorldBounds(world);
+    }
+
 }

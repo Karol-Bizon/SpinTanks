@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(spinTanks
     src/main.cpp
+    src/menu.cpp
     src/game.cpp
     src/tank.cpp
     src/tilemap.cpp

@@ -83,10 +83,24 @@ CMakeFiles/spinTanks.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/spinTanks.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/main.cpp -o CMakeFiles/spinTanks.dir/src/main.cpp.s
 
+CMakeFiles/spinTanks.dir/src/menu.cpp.o: CMakeFiles/spinTanks.dir/flags.make
+CMakeFiles/spinTanks.dir/src/menu.cpp.o: /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/menu.cpp
+CMakeFiles/spinTanks.dir/src/menu.cpp.o: CMakeFiles/spinTanks.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/spinTanks.dir/src/menu.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/spinTanks.dir/src/menu.cpp.o -MF CMakeFiles/spinTanks.dir/src/menu.cpp.o.d -o CMakeFiles/spinTanks.dir/src/menu.cpp.o -c /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/menu.cpp
+
+CMakeFiles/spinTanks.dir/src/menu.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/spinTanks.dir/src/menu.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/menu.cpp > CMakeFiles/spinTanks.dir/src/menu.cpp.i
+
+CMakeFiles/spinTanks.dir/src/menu.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/spinTanks.dir/src/menu.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/menu.cpp -o CMakeFiles/spinTanks.dir/src/menu.cpp.s
+
 CMakeFiles/spinTanks.dir/src/game.cpp.o: CMakeFiles/spinTanks.dir/flags.make
 CMakeFiles/spinTanks.dir/src/game.cpp.o: /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/game.cpp
 CMakeFiles/spinTanks.dir/src/game.cpp.o: CMakeFiles/spinTanks.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/spinTanks.dir/src/game.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/spinTanks.dir/src/game.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/spinTanks.dir/src/game.cpp.o -MF CMakeFiles/spinTanks.dir/src/game.cpp.o.d -o CMakeFiles/spinTanks.dir/src/game.cpp.o -c /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/game.cpp
 
 CMakeFiles/spinTanks.dir/src/game.cpp.i: cmake_force
@@ -100,7 +114,7 @@ CMakeFiles/spinTanks.dir/src/game.cpp.s: cmake_force
 CMakeFiles/spinTanks.dir/src/tank.cpp.o: CMakeFiles/spinTanks.dir/flags.make
 CMakeFiles/spinTanks.dir/src/tank.cpp.o: /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/tank.cpp
 CMakeFiles/spinTanks.dir/src/tank.cpp.o: CMakeFiles/spinTanks.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/spinTanks.dir/src/tank.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/spinTanks.dir/src/tank.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/spinTanks.dir/src/tank.cpp.o -MF CMakeFiles/spinTanks.dir/src/tank.cpp.o.d -o CMakeFiles/spinTanks.dir/src/tank.cpp.o -c /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/tank.cpp
 
 CMakeFiles/spinTanks.dir/src/tank.cpp.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/spinTanks.dir/src/tank.cpp.s: cmake_force
 CMakeFiles/spinTanks.dir/src/tilemap.cpp.o: CMakeFiles/spinTanks.dir/flags.make
 CMakeFiles/spinTanks.dir/src/tilemap.cpp.o: /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/tilemap.cpp
 CMakeFiles/spinTanks.dir/src/tilemap.cpp.o: CMakeFiles/spinTanks.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/spinTanks.dir/src/tilemap.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/spinTanks.dir/src/tilemap.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/spinTanks.dir/src/tilemap.cpp.o -MF CMakeFiles/spinTanks.dir/src/tilemap.cpp.o.d -o CMakeFiles/spinTanks.dir/src/tilemap.cpp.o -c /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/tilemap.cpp
 
 CMakeFiles/spinTanks.dir/src/tilemap.cpp.i: cmake_force
@@ -128,7 +142,7 @@ CMakeFiles/spinTanks.dir/src/tilemap.cpp.s: cmake_force
 CMakeFiles/spinTanks.dir/src/projectile.cpp.o: CMakeFiles/spinTanks.dir/flags.make
 CMakeFiles/spinTanks.dir/src/projectile.cpp.o: /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/projectile.cpp
 CMakeFiles/spinTanks.dir/src/projectile.cpp.o: CMakeFiles/spinTanks.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/spinTanks.dir/src/projectile.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/spinTanks.dir/src/projectile.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/spinTanks.dir/src/projectile.cpp.o -MF CMakeFiles/spinTanks.dir/src/projectile.cpp.o.d -o CMakeFiles/spinTanks.dir/src/projectile.cpp.o -c /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/projectile.cpp
 
 CMakeFiles/spinTanks.dir/src/projectile.cpp.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/spinTanks.dir/src/projectile.cpp.s: cmake_force
 CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o: CMakeFiles/spinTanks.dir/flags.make
 CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o: /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/powerUPPS.cpp
 CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o: CMakeFiles/spinTanks.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o -MF CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o.d -o CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o -c /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/src/powerUPPS.cpp
 
 CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.i: cmake_force
@@ -156,6 +170,7 @@ CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.s: cmake_force
 # Object files for target spinTanks
 spinTanks_OBJECTS = \
 "CMakeFiles/spinTanks.dir/src/main.cpp.o" \
+"CMakeFiles/spinTanks.dir/src/menu.cpp.o" \
 "CMakeFiles/spinTanks.dir/src/game.cpp.o" \
 "CMakeFiles/spinTanks.dir/src/tank.cpp.o" \
 "CMakeFiles/spinTanks.dir/src/tilemap.cpp.o" \
@@ -166,6 +181,7 @@ spinTanks_OBJECTS = \
 spinTanks_EXTERNAL_OBJECTS =
 
 spinTanks: CMakeFiles/spinTanks.dir/src/main.cpp.o
+spinTanks: CMakeFiles/spinTanks.dir/src/menu.cpp.o
 spinTanks: CMakeFiles/spinTanks.dir/src/game.cpp.o
 spinTanks: CMakeFiles/spinTanks.dir/src/tank.cpp.o
 spinTanks: CMakeFiles/spinTanks.dir/src/tilemap.cpp.o
@@ -176,7 +192,7 @@ spinTanks: /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.6.1
 spinTanks: /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.6.1
 spinTanks: /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.6.1
 spinTanks: CMakeFiles/spinTanks.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable spinTanks"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable spinTanks"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/spinTanks.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

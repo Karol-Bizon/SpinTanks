@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/spinTanks.dir/src/game.cpp.o.d"
   "CMakeFiles/spinTanks.dir/src/main.cpp.o"
   "CMakeFiles/spinTanks.dir/src/main.cpp.o.d"
+  "CMakeFiles/spinTanks.dir/src/menu.cpp.o"
+  "CMakeFiles/spinTanks.dir/src/menu.cpp.o.d"
   "CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o"
   "CMakeFiles/spinTanks.dir/src/powerUPPS.cpp.o.d"
   "CMakeFiles/spinTanks.dir/src/projectile.cpp.o"

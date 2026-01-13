@@ -241,4 +241,5 @@ CMakeFiles/spinTanks.dir/src/main.cpp.o: \
  /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/tilemap.hpp \
  /usr/include/c++/13/cstdint \
  /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/projectile.hpp \
- /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/powerUPPS.hpp
+ /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/powerUPPS.hpp \
+ /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/menu.hpp

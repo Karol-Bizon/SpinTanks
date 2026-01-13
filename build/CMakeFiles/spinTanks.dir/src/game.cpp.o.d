@@ -242,6 +242,7 @@ CMakeFiles/spinTanks.dir/src/game.cpp.o: \
  /usr/include/c++/13/cstdint \
  /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/projectile.hpp \
  /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/powerUPPS.hpp \
+ /home/kamil/Documents/IO/sem1/pi/project/SpinTanks/include/menu.hpp \
  /usr/include/c++/13/random /usr/include/c++/13/cmath /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
