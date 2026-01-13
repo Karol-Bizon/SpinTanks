@@ -10,7 +10,7 @@ static constexpr float PI = 3.14159265f;
 Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture)
 : controlKey_(controlKey)
 {
-    body_.setSize({60.f * 1.5f, 60.f * 1.5f}); // tu zmieniam, bylo 60.f robie 30.f, nvm, nie to
+    body_.setSize({60.f * 1.2f, 60.f * 1.4f}); // tu zmieniam, bylo 60.f robie 30.f, nvm, nie to
     body_.setTexture(&texture, true);
     body_.setOrigin(body_.getSize() * 0.5f);
     body_.setPosition(position);

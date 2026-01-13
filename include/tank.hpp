@@ -7,7 +7,7 @@ struct baseParameters {
     float BASE_dmg_ = 7.7f;
     float BASE_reload_ = 0.5f;
     float BASE_maxHP_ = 100.f;
-    float BASE_rotsped_ = 30.f;
+    float BASE_rotsped_ = 90.f;
     float BASE_sped_ = 180.f;
 };
 
@@ -77,7 +77,7 @@ private:
     sf::RectangleShape body_;
     sf::Keyboard::Key controlKey_;
     float angleDeg_ = 0.f;
-    float turnSpeed_ = 30.f; // za szybko do testow strzelania, zmieniam na 30.f, bylo 180.f
+    float turnSpeed_ = 90.f; // za szybko do testow strzelania, zmieniam na 30.f, bylo 180.f
     float moveSpeed_ = 180.f;
     float turnDirection_ = 1.f;
     float DMG_ = 7.7f;
@@ -124,8 +124,8 @@ private:
     sf::RectangleShape reloadBarFront_;
     float reloadBarWidth_ = 48.f;
     float reloadBarHeight_ = 6.f;
-    float reloadBarOffsetY_ = 7.f; //odleg³oœæ od œrodka czo³gu (np. poni¿ej HP)
-    sf::Color reloadColor_ = sf::Color(200, 200, 50); //domyœlny kolor (zolty)
+    float reloadBarOffsetY_ = 7.f; //odlegï¿½oï¿½ï¿½ od ï¿½rodka czoï¿½gu (np. poniï¿½ej HP)
+    sf::Color reloadColor_ = sf::Color(200, 200, 50); //domyï¿½lny kolor (zolty)
 
     //rzeczy reload podstawowych wartosci
     baseParameters baza_;
