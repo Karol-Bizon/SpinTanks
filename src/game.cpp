@@ -68,7 +68,8 @@ Game::Game(std::size_t tankCount, unsigned maxBuildBlocks)
       "SpinTanks"),
   maxBuildBlocks_(maxBuildBlocks),
   builtBlocks_(0),
-  editorEnabled_(true)
+  editorEnabled_(true),
+  state_(GameState::MENU)
 {   
     //fps
     window_.setFramerateLimit(60);
@@ -142,6 +143,12 @@ void Game::run() {
     while (window_.isOpen()) {
         processEvents();
         float dt = clock_.restart().asSeconds();
+
+        if (state_ == GameState::MENU) {
+            renderMenu();
+            continue;
+        }
+
         update(dt);
         render();
     }
@@ -218,7 +225,7 @@ void Game::update(float dt) {
         }
     }
     
-    //update i spawn powerupów - kg
+    //update i spawn powerupï¿½w - kg
     spawnPowerupps();
     for (auto& pu : powerupps_) {
         pu.update(dt);
@@ -506,4 +513,10 @@ void Game::spawnPowerupps() {
     //}
     canSpawnPowerUp_ = false;
     PowerUp_cooldown_.restart();
+}
+
+
+void Game::renderMenu() {
+    window_.clear(sf::Color::Black);
+    window_.display();
 }

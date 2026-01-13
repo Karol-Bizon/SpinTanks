@@ -7,6 +7,12 @@
 #include "projectile.hpp"
 #include "powerUPPS.hpp"
 
+enum class GameState {
+    MENU,
+    PLAYING,
+    EXIT
+};
+
 class Game {
 public:
     explicit Game(std::size_t tankCount, unsigned maxBuildBlocks);
@@ -35,6 +41,9 @@ private:
 
     void tankHitPowerupp(Tank& t, PowerUP& up);
     void spawnPowerupps();
+
+    GameState state_;
+    void renderMenu();
 
 private:
     sf::RenderWindow window_;
