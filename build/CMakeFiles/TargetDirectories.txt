@@ -1,3 +1,0 @@
-/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles/spinTanks.dir
-/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles/edit_cache.dir
-/home/kamil/Documents/IO/sem1/pi/project/SpinTanks/build/CMakeFiles/rebuild_cache.dir
