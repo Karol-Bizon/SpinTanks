@@ -11,6 +11,10 @@ struct baseParameters {
     float BASE_sped_ = 180.f;
 };
 
+namespace TankParameters {
+    inline float tankSize = 80.f;
+}
+
 class Tank {
 public:
     Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture);
@@ -31,6 +35,10 @@ public:
 
     sf::Vector2f getForward() const;
     void setPosition(sf::Vector2f p) { body_.setPosition(p); }
+
+    sf::FloatRect getHitBox() const;
+    sf::Vector2f getHitboxCenter() const;
+    float getHitboxRadius() const;
 
     //rzeczy zwiazane z HP - kg
 

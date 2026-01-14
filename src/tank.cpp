@@ -10,7 +10,8 @@ static constexpr float PI = 3.14159265f;
 Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture)
 : controlKey_(controlKey)
 {
-    body_.setSize({60.f * 1.2f, 60.f * 1.4f}); // tu zmieniam, bylo 60.f robie 30.f, nvm, nie to
+    body_.setSize({TankParameters::tankSize,
+                   TankParameters::tankSize});
     body_.setTexture(&texture, true);
     body_.setOrigin(body_.getSize() * 0.5f);
     body_.setPosition(position);
@@ -240,11 +241,11 @@ void Tank::draw(sf::RenderTarget& target) const {
 
     //DEBUGG ONLY // jak chcecie to usuncie, narazie mi pasuje bo pokazuje co sie dzieje -- podobny hitbox dodalem w pocisku -kg
     //ORAZ zmodyfikowwalem rozmiar tekstury pocisku!!! wazne dla collider
-    sf::RectangleShape debug(body_);
-    debug.setFillColor(sf::Color::Transparent);
-    debug.setOutlineThickness(1.f);
-    debug.setOutlineColor(sf::Color::Red);
-    target.draw(debug);
+    // sf::RectangleShape debug(body_);
+    // debug.setFillColor(sf::Color::Transparent);
+    // debug.setOutlineThickness(1.f);
+    // debug.setOutlineColor(sf::Color::Red);
+    // target.draw(debug);
 }
 
 void Tank::flipRotationDirection() {
@@ -296,4 +297,27 @@ void Tank::RestoreDefaults() {
             body_.setFillColor(originalColor_);
         }
     }
+}
+
+sf::FloatRect Tank::getHitBox() const {
+    sf::FloatRect b = body_.getGlobalBounds();
+
+    constexpr float shrink = 0.25f; // 25% z każdej strony
+
+    b.left   += b.width  * shrink * 0.5f;
+    b.top    += b.height * shrink * 0.5f;
+    b.width  *= (1.f - shrink);
+    b.height *= (1.f - shrink);
+
+
+    return b;
+}
+
+sf::Vector2f Tank::getHitboxCenter() const {
+    // środek czołgu = środek body_
+    return body_.getPosition();
+}
+
+float Tank::getHitboxRadius() const {
+    return TankParameters::tankSize * 0.4f;
 }

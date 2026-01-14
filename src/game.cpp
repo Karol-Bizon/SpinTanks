@@ -278,8 +278,21 @@ void Game::render() {
     for (auto& pu : powerupps_)
         pu.draw(window_);
 
-    for (auto& tank : tanks_)
-        tank.draw(window_);
+    for (auto& tank : tanks_) {
+            tank.draw(window_);
+            // ===== DEBUG HITBOX =====
+            sf::FloatRect hb = tank.getHitBox();
+
+            sf::CircleShape dbg;
+            dbg.setRadius(tank.getHitboxRadius());
+            dbg.setOrigin(dbg.getRadius(), dbg.getRadius());
+            dbg.setPosition(tank.getHitboxCenter());
+            dbg.setFillColor(sf::Color::Transparent);
+            dbg.setOutlineThickness(1.f);
+            dbg.setOutlineColor(sf::Color::Red);
+
+            window_.draw(dbg);
+        }
 
     for (auto& p : projectiles_)
         p.draw(window_);
@@ -385,15 +398,21 @@ void Game::spawnProjectile(Tank& tank) {
 
 //tu trza troche pogrzebac
 bool Game::tankHitsBlocks(const Tank& t) const {
-    sf::FloatRect box = t.getAABB();
 
-    sf::Vector2i c0 = map_.worldToCell({box.left, box.top});
-    sf::Vector2i c1 = map_.worldToCell({box.left + box.width, box.top + box.height});
+    sf::Vector2f center = t.getHitboxCenter();
+    float radius = t.getHitboxRadius();
+
+    // ⬇⬇⬇ TO JEST TWÓJ STARY KOD, NIETKNIĘTY ⬇⬇⬇
+
+    sf::Vector2i c0 = map_.worldToCell({center.x - radius, center.y - radius});
+    sf::Vector2i c1 = map_.worldToCell({center.x + radius, center.y + radius});
 
     int minX = std::max(0, std::min(c0.x, c1.x));
-    int maxX = std::min<int>(static_cast<int>(map_.getWidth()) - 1, std::max(c0.x, c1.x));
+    int maxX = std::min<int>(static_cast<int>(map_.getWidth()) - 1,
+                             std::max(c0.x, c1.x));
     int minY = std::max(0, std::min(c0.y, c1.y));
-    int maxY = std::min<int>(static_cast<int>(map_.getHeight()) - 1, std::max(c0.y, c1.y));
+    int maxY = std::min<int>(static_cast<int>(map_.getHeight()) - 1,
+                             std::max(c0.y, c1.y));
 
     const sf::Vector2u ts = map_.getTileSizePx();
     const sf::Vector2f sc = map_.getScale();
@@ -401,30 +420,92 @@ bool Game::tankHitsBlocks(const Tank& t) const {
     for (int y = minY; y <= maxY; ++y) {
         for (int x = minX; x <= maxX; ++x) {
             if (map_.get(static_cast<unsigned>(x), static_cast<unsigned>(y)) != 0) {
-                sf::Vector2f cellPos = map_.cellToWorld(static_cast<unsigned>(x), static_cast<unsigned>(y));
-                sf::FloatRect tileRect(cellPos.x, cellPos.y,
-                                       ts.x * sc.x, ts.y * sc.y);
 
-                if (box.intersects(tileRect))
+                sf::Vector2f cellPos =
+                    map_.cellToWorld(static_cast<unsigned>(x),
+                                     static_cast<unsigned>(y));
+
+                sf::FloatRect tileRect(
+                    cellPos.x, cellPos.y,
+                    ts.x * sc.x, ts.y * sc.y
+                );
+
+                // ===== JEDYNA ZMIANA =====
+                float cx = std::clamp(center.x,
+                                      tileRect.left,
+                                      tileRect.left + tileRect.width);
+                float cy = std::clamp(center.y,
+                                      tileRect.top,
+                                      tileRect.top + tileRect.height);
+
+                float dx = center.x - cx;
+                float dy = center.y - cy;
+
+                if (dx*dx + dy*dy < radius*radius)
                     return true;
             }
         }
     }
+
     return false;
+
+    // sf::FloatRect box = t.getHitBox();
+
+    // sf::Vector2i c0 = map_.worldToCell({box.left, box.top});
+    // sf::Vector2i c1 = map_.worldToCell({box.left + box.width, box.top + box.height});
+
+    // int minX = std::max(0, std::min(c0.x, c1.x));
+    // int maxX = std::min<int>(static_cast<int>(map_.getWidth()) - 1, std::max(c0.x, c1.x));
+    // int minY = std::max(0, std::min(c0.y, c1.y));
+    // int maxY = std::min<int>(static_cast<int>(map_.getHeight()) - 1, std::max(c0.y, c1.y));
+
+    // const sf::Vector2u ts = map_.getTileSizePx();
+    // const sf::Vector2f sc = map_.getScale();
+
+    // for (int y = minY; y <= maxY; ++y) {
+    //     for (int x = minX; x <= maxX; ++x) {
+    //         if (map_.get(static_cast<unsigned>(x), static_cast<unsigned>(y)) != 0) {
+    //             sf::Vector2f cellPos = map_.cellToWorld(static_cast<unsigned>(x), static_cast<unsigned>(y));
+    //             sf::FloatRect tileRect(cellPos.x, cellPos.y,
+    //                                    ts.x * sc.x, ts.y * sc.y);
+
+    //             if (box.intersects(tileRect))
+    //                 return true;
+    //         }
+    //     }
+    // }
+    // return false;
+
+
 }
 
 bool Game::tankHitsOtherTanks(const Tank& me) const {
-    if (!me.isAlive()) return false;
+    // if (!me.isAlive()) return false;
 
-    const sf::FloatRect box = me.getAABB();
+    // const sf::FloatRect box = me.getHitBox();
 
-    for (const auto& t : tanks_) {
-        if (&t == &me) continue;
-        if (!t.isAlive()) continue;
+    // for (const auto& t : tanks_) {
+    //     if (&t == &me) continue;
+    //     if (!t.isAlive()) continue;
 
-        sf::FloatRect otherRect = t.getAABB();
+    //     sf::FloatRect otherRect = t.getHitBox();
 
-        if (box.intersects(otherRect)) {
+    //     if (box.intersects(otherRect)) {
+    //         return true;
+    //     }
+    // }
+    // return false;
+
+    sf::Vector2f c1 = me.getHitboxCenter();
+    float r1 = me.getHitboxRadius();
+
+    for (const auto& notme : tanks_) {
+        if (&notme == &me) continue;
+
+        sf::Vector2f c2 = notme.getHitboxCenter();
+        float r2 = notme.getHitboxRadius();
+        sf::Vector2f d = c1 - c2;
+        if (d.x*d.x + d.y*d.y < (r1 + r2)*(r1 + r2)) {
             return true;
         }
     }
