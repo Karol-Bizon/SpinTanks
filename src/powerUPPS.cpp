@@ -16,6 +16,11 @@ PowerUP::PowerUP(const sf::Texture& tex, sf::Vector2f pos)
 void PowerUP::update(float dt) {
     //sprite_.move(vel_ * dt); wiemy juz ze ta funkcja dziala
     //std::cout << "i am a powerup!" << std::endl;
+    //std::cout << AliveTimer_.getElapsedTime().asSeconds() << std::endl;
+ 
+
+    // tutaj mozemy sprawdzic timer po prostu - kg
+    if (AliveTimer_.getElapsedTime().asSeconds() > 17.f && isAlive()) { kill(); }
 }
 
 void PowerUP::draw(sf::RenderTarget& target) const {

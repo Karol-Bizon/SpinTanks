@@ -35,5 +35,5 @@ private:
     sf::Sprite sprite_;
     bool alive_ = true;
     Bonuses bonuses_;
-    
+    sf::Clock AliveTimer_;
 };

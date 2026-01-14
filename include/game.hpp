@@ -82,4 +82,7 @@ private:
 
     TileMap map_;
     TileMap::TileId currentBrush_ = 1; 
+
+    //strzal jeden per wcisniecie guzika strzalu - kg
+    std::vector<bool> shotLocked_;
 };

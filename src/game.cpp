@@ -79,6 +79,8 @@ Game::Game()
     //fps
     window_.setFramerateLimit(60);
 
+    
+
      if (!backgroundTex_.loadFromFile("graphics/background.png")) {
         //
     } else {
@@ -391,13 +393,32 @@ void Game::paintAtMouse(bool erase) {
 }
 
 
-//strzelanie
+//strzelanie - tu poprawiam - kg
 void Game::handleShootInput(const sf::Event& e) {
+    /*
     if (e.type != sf::Event::KeyPressed) return;
 
     for (std::size_t i = 0; i < tanks_.size(); ++i) {
         if (e.key.code == SHOOT_KEYS[i]) {
             spawnProjectile(tanks_[i]);
+        }
+    }
+    */
+
+    //patch - kg
+    if (e.type == sf::Event::KeyPressed) {
+        for (std::size_t i = 0; i < tanks_.size(); ++i) {
+            if (e.key.code == SHOOT_KEYS[i] && !shotLocked_[i]) {
+                spawnProjectile(tanks_[i]);
+                shotLocked_[i] = true; //zablokuj dopoki nie będzie KeyReleased
+            }
+        }
+    }
+    else if (e.type == sf::Event::KeyReleased) {
+        for (std::size_t i = 0; i < tanks_.size(); ++i) {
+            if (e.key.code == SHOOT_KEYS[i]) {
+                shotLocked_[i] = false; //odblokuj
+            }
         }
     }
 }
@@ -700,6 +721,8 @@ void Game::startGame(std::size_t tankCount) {
         //t.setFont(); //pozniej trza dodac zeby byl font!!! aka plik z fontem danym
         tanks_.back().setWorldBounds(world);
     }
+
+    shotLocked_.assign(tanks_.size(), false);
 
 }
 
