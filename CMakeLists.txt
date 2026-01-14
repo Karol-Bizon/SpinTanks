@@ -17,4 +17,4 @@ find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
 target_include_directories(spinTanks PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(spinTanks PRIVATE sfml-graphics sfml-window sfml-system)
+target_link_libraries(spinTanks PRIVATE sfml-graphics sfml-window sfml-system sfml-audio)

@@ -118,17 +118,43 @@ Game::Game()
     map_.setPosition(0.f, 0.f);
     map_.setScale(0.4f, 0.4f); 
     currentBrush_ = 1;
+
+    if (!menuMusic_.openFromFile("audio/menu_music.mp3")) {
+    std::cout << "Failed to load menu music!\n";
+    } else {
+        menuMusic_.setLoop(true);
+        menuMusic_.setVolume(40.f); // np. 0–100
+    }
+
+    if (!gameMusic_.openFromFile("audio/battle_music.mp3")) {
+    std::cout << "Failed to load gameplay music\n";
+    } else {
+        gameMusic_.setLoop(true);
+        gameMusic_.setVolume(35.f);
+    }
+
+    // GAME OVER
+    if (!gameOverMusic_.openFromFile("audio/final_music.mp3")) {
+        std::cout << "Failed to load game over music\n";
+    } else {
+        gameOverMusic_.setLoop(false);
+        gameOverMusic_.setVolume(45.f);
+    }
 }
 
 
 void Game::run() {
     while (window_.isOpen()) {
         processEvents();
+        updateMusic();
         float dt = clock_.restart().asSeconds();
 
         if (state_ == GameState::MENU) {
 
+            window_.clear(sf::Color::Black);
+            window_.setView(window_.getDefaultView()); 
             menu_.render(window_);
+            window_.display();
 
             if (menu_.startRequested()) {
                 startGame(menu_.getPlayerCount());
@@ -146,7 +172,7 @@ void Game::processEvents() {
     sf::Event e;
     while (window_.pollEvent(e)) {
 
-        if (state_ == GameState::MENU) {
+        if (state_ == GameState::MENU || state_ == GameState::GAME_OVER) {
             menu_.handleEvent(e);
             continue;
         }
@@ -265,6 +291,13 @@ void Game::update(float dt) {
                        [](const Projectile& p){ return !p.isAlive(); }),
         projectiles_.end()
     );
+
+    if (state_ == GameState::PLAYING) {
+    if (aliveTanks() <= 1) {
+        state_ = GameState::GAME_OVER;
+        menu_.setScreen(Menu::Screen::GAME_OVER);
+    }
+}
 }
 
 void Game::render() {
@@ -296,6 +329,10 @@ void Game::render() {
 
     for (auto& p : projectiles_)
         p.draw(window_);
+
+    if (state_ == GameState::GAME_OVER) {
+        menu_.render(window_);
+    }
 
     window_.display();
 }
@@ -664,4 +701,45 @@ void Game::startGame(std::size_t tankCount) {
         tanks_.back().setWorldBounds(world);
     }
 
+}
+
+std::size_t Game::aliveTanks() const {
+    std::size_t count = 0;
+    for (const auto& t : tanks_) {
+        if (t.isAlive())
+            ++count;
+    }
+    return count;
+}
+
+void Game::updateMusic() {
+
+    auto stopAll = [&]() {
+        menuMusic_.stop();
+        gameMusic_.stop();
+        gameOverMusic_.stop();
+    };
+
+    switch (state_) {
+        case GameState::MENU:
+            if (menuMusic_.getStatus() != sf::Music::Playing) {
+                stopAll();
+                menuMusic_.play();
+            }
+            break;
+
+        case GameState::PLAYING:
+            if (gameMusic_.getStatus() != sf::Music::Playing) {
+                stopAll();
+                gameMusic_.play();
+            }
+            break;
+
+        case GameState::GAME_OVER:
+            if (gameOverMusic_.getStatus() != sf::Music::Playing) {
+                stopAll();
+                gameOverMusic_.play();
+            }
+            break;
+    }
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 #include <iostream>
 #include "tank.hpp"
@@ -13,7 +14,7 @@
 enum class GameState {
     MENU,
     PLAYING,
-    EXIT
+    GAME_OVER
 };
 
 class Game {
@@ -50,6 +51,14 @@ private:
 
     GameState state_;
     Menu menu_;
+
+    std::size_t aliveTanks() const;
+
+    sf::Music menuMusic_;
+    sf::Music gameMusic_;
+    sf::Music gameOverMusic_;
+
+    void updateMusic();
 
 private:
     sf::RenderWindow window_;

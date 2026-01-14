@@ -7,7 +7,8 @@ class Menu {
 public:
     enum class Screen {
         MAIN,
-        PLAYER_SELECT
+        PLAYER_SELECT,
+        GAME_OVER
     };
 
     Menu(float width, float height);
@@ -19,6 +20,8 @@ public:
     bool startRequested() const;
 
     std::size_t getPlayerCount() const;
+
+    void setScreen(Screen);
 
     
 private:
@@ -34,6 +37,12 @@ private:
     void renderMainMenu(sf::RenderWindow&);
     void renderPlayerSelect(sf::RenderWindow&);
 
+    void handleGameOverEvent(const sf::Event&);
+    void renderGameOver(sf::RenderWindow&);
+
     std::size_t playerCount_ = 2;
     bool startGame_ = false;
+
+    sf::Texture backgroundTex_;
+    sf::Sprite  backgroundSprite_;
 };

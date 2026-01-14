@@ -15,6 +15,19 @@ Menu::Menu(float width, float height) {
     sf::FloatRect bounds = text_.getLocalBounds();
     text_.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
     text_.setPosition(width / 2.f, height / 2.f);
+
+    if (!backgroundTex_.loadFromFile("graphics/bg_wallpaper.png")) {
+        std::cout << "Failed to load menu background!\n";
+    } else {
+        backgroundSprite_.setTexture(backgroundTex_);
+
+        sf::Vector2u s = backgroundTex_.getSize();
+        backgroundSprite_.setScale(
+            width  / static_cast<float>(s.x),
+            height / static_cast<float>(s.y)
+        );
+    }
+
 }
 
 void Menu::handleEvent(const sf::Event& event) {
@@ -24,6 +37,9 @@ void Menu::handleEvent(const sf::Event& event) {
             break;
         case Screen::PLAYER_SELECT:
             handlePlayerSelectEvent(event);
+            break;
+        case Screen::GAME_OVER:
+            handleGameOverEvent(event);
             break;
     }
 }
@@ -56,19 +72,22 @@ std::size_t Menu::getPlayerCount() const {
 }
 
 void Menu::render(sf::RenderWindow& window) {
-    window.clear(sf::Color::Black);
 
     switch (screen_) {
         case Screen::MAIN:
+            window.draw(backgroundSprite_);
             renderMainMenu(window);
             break;
         case Screen::PLAYER_SELECT:
+            window.draw(backgroundSprite_);
             renderPlayerSelect(window);
             break;
+        case Screen::GAME_OVER:
+            renderGameOver(window);
+            break;
     }
-
-    window.display();
 }
+
 
 void Menu::renderMainMenu(sf::RenderWindow& window) {
     text_.setString("PRESS ENTER TO START");
@@ -81,4 +100,31 @@ void Menu::renderPlayerSelect(sf::RenderWindow& window) {
         "\nLEFT / RIGHT\nENTER TO START"
     );
     window.draw(text_);
+}
+
+void Menu::renderGameOver(sf::RenderWindow& window) {
+    text_.setString("GAME OVER\nENTER");
+    text_.setCharacterSize(80);
+    text_.setFillColor(sf::Color::Red);
+
+    auto b = text_.getLocalBounds();
+    text_.setOrigin(b.width / 2.f, b.height / 2.f);
+    text_.setPosition(
+        window.getSize().x / 2.f,
+        window.getSize().y / 2.f
+    );
+
+    window.draw(text_);
+}
+
+void Menu::setScreen(Screen s) {
+    screen_ = s;
+    startRequested_ = false;
+}
+
+void Menu::handleGameOverEvent(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Enter) {
+        startRequested_ = true; // wracamy do menu / restart
+    }
 }

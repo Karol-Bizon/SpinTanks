@@ -125,7 +125,7 @@ private:
     /// reload logika - kg
     bool isReloaded_ = true;
     sf::Clock reloadCLK_;
-    float reloadDuration_ = 0.5f;
+    float reloadDuration_ = 0.25f;
 
     //pasek przeladowania
     sf::RectangleShape reloadBarBack_;
