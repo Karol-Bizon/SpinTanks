@@ -997,11 +997,11 @@ void Game::drawPowerUpTopBar() {
 
     struct Item { const char* name; const char* desc; int tex; };
     static Item items[] = {
-        {"HEAL", "+20 HP", 2},
+        {"HEAL", "HEALS 20 HP", 2},
         {"DMG BOOST", "DMG x4", 3},
-        {"SPEED", "MOVE/TURN +", 4},
-        {"MAX HP", "MAXHP 400", 5},
-        {"FAST RELOAD", "RELOAD x0.2", 6},
+        {"SPEED", "FAST MOVE\nSLOW TURN", 4},
+        {"MAX HP", "SETS MAXHP TO 400", 5},
+        {"FAST RELOAD", "RELOAD TIME x0.4", 6},
     };
 
     const float blockW = 190.f;
