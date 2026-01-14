@@ -212,6 +212,15 @@ void Game::processEvents() {
         if (e.type == sf::Event::Closed)
             window_.close();
 
+        if (!editorEnabled_ && editorPhase_ == EditorPhase::OFF && e.type == sf::Event::KeyPressed) {
+            for (std::size_t i = 0; i < tanks_.size(); ++i) {
+                if (tankLabelVisible_[i] && e.key.code == TANK_KEYS[i]) {
+                    tankLabelVisible_[i] = false;
+                    break;
+                }
+            }
+        }
+
         if (editorEnabled_) {
             handleEditorInput(e);
         } else {
@@ -387,7 +396,7 @@ void Game::render() {
         p.draw(window_);
     
     if (editorPhase_ == EditorPhase::PREFIGHT || editorPhase_ == EditorPhase::OFF)
-    drawTankKeyLabels();
+        drawTankKeyLabels();
 
     window_.setView(window_.getDefaultView());
 
@@ -828,6 +837,7 @@ void Game::startGame(std::size_t tankCount) {
     editorEnabled_ = true;
     editorPhase_ = EditorPhase::INTRO;
     phaseClock_.restart();
+    for (int i = 0; i < 4; ++i) tankLabelVisible_[i] = true;
 }
 
 std::size_t Game::aliveTanks() const {
@@ -889,6 +899,7 @@ void Game::drawTankKeyLabels() {
     if (!uiFont_.getInfo().family.empty()) {
         for (std::size_t i = 0; i < tanks_.size(); ++i) {
             if (!tanks_[i].isAlive()) continue;
+            if (!tankLabelVisible_[i]) continue;
 
             sf::Text t;
             t.setFont(uiFont_);
