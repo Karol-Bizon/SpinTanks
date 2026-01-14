@@ -19,6 +19,9 @@ public:
     sf::Vector2f getPosition() const { return sprite_.getPosition(); }
     sf::Vector2f getCenter() const { return sprite_.getPosition(); }
 
+    sf::Vector2f getHitboxCenter() const;
+    float getHitboxRadius() const;
+
 private:
     sf::Sprite sprite_;
     sf::Vector2f vel_;

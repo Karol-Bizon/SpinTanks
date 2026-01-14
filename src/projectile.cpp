@@ -17,10 +17,11 @@ void Projectile::draw(sf::RenderTarget& target) const {
     target.draw(sprite_);
 
     //DEBUG - pokazuje collider pocisku (ogromnie wielki byl oryginalnie XD)
-    sf::FloatRect box = sprite_.getGlobalBounds();
-    sf::RectangleShape debug;
-    debug.setPosition({ box.left, box.top });
-    debug.setSize({ box.width, box.height });
+    sf::CircleShape debug;
+    float r = getHitboxRadius();
+    debug.setRadius(r);
+    debug.setOrigin(r, r);
+    debug.setPosition(getHitboxCenter());
     debug.setFillColor(sf::Color::Transparent);
     debug.setOutlineThickness(1.f);
     debug.setOutlineColor(sf::Color::Green);
@@ -33,4 +34,14 @@ void Projectile::setOwner(int tankn) {
 
 void Projectile::setDMG(float ile) {
     damage_ = ile;
+}
+
+sf::Vector2f Projectile::getHitboxCenter() const {
+    return sprite_.getPosition();
+}
+
+float Projectile::getHitboxRadius() const {
+    // logiczny promień – MNIEJSZY niż sprite
+    sf::FloatRect b = sprite_.getLocalBounds();
+    return std::min(b.width, b.height) * 0.35f;
 }
