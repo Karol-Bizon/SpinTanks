@@ -12,13 +12,6 @@ static constexpr float WORLD_WIDTH  = 1000.f;
 static constexpr float WORLD_HEIGHT = 1000.f;
 static constexpr float START_POSITION_FRAC = 0.15f;
 
-//definicje sterowania
-static const sf::Keyboard::Key MOVE_KEYS[4] = {
-    sf::Keyboard::Space,
-    sf::Keyboard::Enter,
-    sf::Keyboard::W,
-    sf::Keyboard::Up
-};
 
 static const sf::Keyboard::Key SHOOT_KEYS[4] = {
     // sf::Keyboard::LShift,
@@ -79,7 +72,8 @@ Game::Game()
     //fps
     window_.setFramerateLimit(60);
 
-    
+    worldView_ = sf::View(sf::FloatRect(0.f, 0.f, WORLD_WIDTH, WORLD_HEIGHT));
+
 
      if (!backgroundTex_.loadFromFile("graphics/background.png")) {
         //
@@ -92,6 +86,21 @@ Game::Game()
         );
     }
 
+    if (!topBarTex_.loadFromFile("graphics/ui_top_panel.png")) {
+        std::cout << "ERROR: nie moge wczytac ui_top_panel.png\n";
+    } else {
+        topBarSprite_.setTexture(topBarTex_);
+
+        // skalowanie na szerokość okna i wysokość topUiHeight_
+        sf::Vector2u s = topBarTex_.getSize();
+        topBarSprite_.setScale(
+            WORLD_WIDTH / static_cast<float>(s.x),
+            topUiHeight_ / static_cast<float>(s.y)
+        );
+        topBarSprite_.setPosition(0.f, 0.f);
+    }
+
+
     if (!fireTex_.loadFromFile("graphics/fire.png")) {
         //
     }
@@ -103,7 +112,6 @@ Game::Game()
         }
     }
 
-    
 
     //stad usunalem do poweruppow dawny kod - kg
 
@@ -142,6 +150,28 @@ Game::Game()
         gameOverMusic_.setLoop(false);
         gameOverMusic_.setVolume(45.f);
     }
+
+    if (!uiFont_.loadFromFile("graphics/main_font.ttf")) {
+        std::cout << "ERROR: nie moge wczytac fontu UI\n";
+    }
+
+    introText_.setFont(uiFont_);
+    introText_.setCharacterSize(64);
+    introText_.setFillColor(sf::Color::White);
+    introText_.setString("TRYB RYSOWANIA");
+    auto ib = introText_.getLocalBounds();
+    introText_.setOrigin(ib.width / 2.f, ib.height / 2.f);
+    introText_.setPosition(WORLD_WIDTH / 2.f, WORLD_HEIGHT / 2.f - 80.f);
+
+
+    fightText_.setFont(uiFont_);
+    fightText_.setString("FIGHT");
+    fightText_.setCharacterSize(90);
+    fightText_.setFillColor(sf::Color::Red);
+    auto fb = fightText_.getLocalBounds();
+    fightText_.setOrigin(fb.width / 2.f, fb.height / 2.f);
+    fightText_.setPosition(WORLD_WIDTH / 2.f, WORLD_HEIGHT / 2.f);
+
 }
 
 
@@ -194,7 +224,21 @@ void Game::processEvents() {
 
 
 void Game::update(float dt) {
+    if (editorEnabled_ && editorPhase_ == EditorPhase::INTRO) {
+        if (phaseClock_.getElapsedTime().asSeconds() >= introShowTime_) {
+            editorPhase_ = EditorPhase::BUILD;
+        }
+        return; // w intro nic nie aktualizujemy
+    }
+
     if (editorEnabled_) return;
+
+    if (editorPhase_ == EditorPhase::PREFIGHT) {
+        if (phaseClock_.getElapsedTime().asSeconds() >= preFightDuration_) {
+            editorPhase_ = EditorPhase::OFF;
+        }
+        return;
+    }
 
     for (auto& tank : tanks_) {
         sf::Vector2f before = tank.getPosition();
@@ -303,7 +347,17 @@ void Game::update(float dt) {
 }
 
 void Game::render() {
+    float winW = static_cast<float>(window_.getSize().x);
+    float winH = static_cast<float>(window_.getSize().y);
+
+    float topFrac = topUiHeight_ / winH;
+    topFrac = std::clamp(topFrac, 0.f, 0.4f); // bezpieczeństwo
+
+    worldView_.setViewport(sf::FloatRect(0.f, topFrac, 1.f, 1.f - topFrac));
+
     window_.clear();
+
+    window_.setView(worldView_);
 
     window_.draw(backgroundSprite_);
 
@@ -331,6 +385,23 @@ void Game::render() {
 
     for (auto& p : projectiles_)
         p.draw(window_);
+    
+    if (editorPhase_ == EditorPhase::PREFIGHT || editorPhase_ == EditorPhase::OFF)
+    drawTankKeyLabels();
+
+    window_.setView(window_.getDefaultView());
+
+    if (state_ == GameState::PLAYING) {
+        drawPowerUpTopBar();
+    }
+
+    if (editorPhase_ == EditorPhase::INTRO) {
+        drawEditorIntro();
+    }
+
+    if (editorPhase_ == EditorPhase::PREFIGHT) {
+        drawFightBanner();
+    }
 
     if (state_ == GameState::GAME_OVER) {
         menu_.render(window_);
@@ -340,11 +411,19 @@ void Game::render() {
 }
 
 void Game::handleEditorInput(const sf::Event& e) {
+    if (editorPhase_ == EditorPhase::INTRO) return;
+
     if (e.type == sf::Event::KeyPressed) {
-        if (e.key.code == sf::Keyboard::Enter) {
+        if (editorPhase_ == EditorPhase::BUILD) {
             editorEnabled_ = false;
+            editorPhase_ = EditorPhase::PREFIGHT;
+            phaseClock_.restart();
+            return;
         }
     }
+
+    // blokujemy rysowanie w INTRO 
+    if (editorPhase_ != EditorPhase::BUILD) return;
 
     if (e.type == sf::Event::MouseButtonPressed) {
         if (e.mouseButton.button == sf::Mouse::Left)
@@ -363,7 +442,11 @@ void Game::handleEditorInput(const sf::Event& e) {
 
 void Game::paintAtMouse(bool erase) {
     sf::Vector2i pixel = sf::Mouse::getPosition(window_);
-    sf::Vector2f world = window_.mapPixelToCoords(pixel);
+
+    // jeśli klik w top UI, ignoruj
+    if (pixel.y < static_cast<int>(topUiHeight_)) return;
+
+    sf::Vector2f world = window_.mapPixelToCoords(pixel, worldView_);
 
     sf::Vector2i cell = map_.worldToCell(world);
     if (cell.x < 0 || cell.y < 0) return;
@@ -387,9 +470,30 @@ void Game::paintAtMouse(bool erase) {
         if (builtBlocks_ >= maxBuildBlocks_) {
             return;
         }
+        if (cellOverlapsAnyTank(x, y)) {
+            return;
+        }
         map_.set(x, y, 1);
         builtBlocks_++;
     }
+}
+
+bool Game::cellOverlapsAnyTank(unsigned cellX, unsigned cellY) const {
+    for (const auto& t : tanks_) {
+        if (!t.isAlive()) continue;
+
+        sf::Vector2f c = t.getHitboxCenter();
+
+        sf::Vector2i tc = map_.worldToCell(c);
+
+        if (tc.x < 0 || tc.y < 0) continue;
+
+        if (static_cast<unsigned>(tc.x) == cellX &&
+            static_cast<unsigned>(tc.y) == cellY) {
+            return true; // ten kafel zawiera środek hitboxu
+        }
+    }
+    return false;
 }
 
 
@@ -570,8 +674,6 @@ bool Game::tankHitsOtherTanks(const Tank& me) const {
     return false;
 }
 
-
-
 bool Game::projectileHitCell(const Projectile& p, sf::Vector2u& outCell) const {
     sf::Vector2f center = p.getCenter();
 
@@ -703,7 +805,6 @@ void Game::startGame(std::size_t tankCount) {
     //chyba ladujemy tekstury czolgow
     for (std::size_t i = 0; i < tankCount; ++i) {
         if (!tankTex_[i].loadFromFile(TANK_FILES[i])) {
-            //
         }
     }
 
@@ -724,6 +825,9 @@ void Game::startGame(std::size_t tankCount) {
 
     shotLocked_.assign(tanks_.size(), false);
 
+    editorEnabled_ = true;
+    editorPhase_ = EditorPhase::INTRO;
+    phaseClock_.restart();
 }
 
 std::size_t Game::aliveTanks() const {
@@ -765,4 +869,164 @@ void Game::updateMusic() {
             }
             break;
     }
+}
+
+std::string Game::keyToString(sf::Keyboard::Key k) const {
+    switch (k) {
+        case sf::Keyboard::Space: return "SPACE";
+        case sf::Keyboard::Enter: return "ENTER";
+        case sf::Keyboard::W:     return "W";
+        case sf::Keyboard::Up:    return "UP";
+        default: return "?";
+    }
+}
+
+void Game::drawFightBanner() {
+    window_.draw(fightText_);
+}
+
+void Game::drawTankKeyLabels() {
+    if (!uiFont_.getInfo().family.empty()) {
+        for (std::size_t i = 0; i < tanks_.size(); ++i) {
+            if (!tanks_[i].isAlive()) continue;
+
+            sf::Text t;
+            t.setFont(uiFont_);
+            t.setCharacterSize(18);
+            t.setFillColor(sf::Color::White);
+
+            t.setString(keyToString(TANK_KEYS[i]));
+
+            sf::Vector2f pos = tanks_[i].getPosition();
+            t.setPosition(pos.x - 24.f, pos.y - 85.f); 
+
+            window_.draw(t);
+        }
+    }
+}
+
+void Game::drawEditorIntro() {
+
+    sf::Text sub;
+    sub.setFont(uiFont_);
+    sub.setCharacterSize(26);
+    sub.setFillColor(sf::Color(220, 220, 220));
+    auto b = sub.getLocalBounds();
+    sub.setOrigin(b.width / 2.f, b.height / 2.f);
+    sub.setPosition(WORLD_WIDTH / 2.f, WORLD_HEIGHT / 2.f - 10.f);
+
+    window_.draw(introText_);
+    window_.draw(sub);
+}
+
+static sf::RectangleShape makeTextBackdrop(const sf::Text& txt, float padding = 6.f, sf::Color color = sf::Color(0,0,0,110))
+{
+    sf::FloatRect b = txt.getGlobalBounds();
+    sf::RectangleShape r;
+    r.setPosition(b.left - padding, b.top - padding);
+    r.setSize({ b.width + 2.f * padding, b.height + 2.f * padding });
+    r.setFillColor(color);
+    r.setOutlineThickness(1.f);
+    r.setOutlineColor(sf::Color(255, 255, 255, 18));
+    return r;
+}
+
+
+void Game::drawPowerUpTopBar() {
+    window_.draw(topBarSprite_);
+
+    //TRYB EDYTORA
+    if (editorEnabled_ && (editorPhase_ == EditorPhase::INTRO || editorPhase_ == EditorPhase::BUILD)) {
+
+        sf::Text title;
+        title.setFont(uiFont_);
+        title.setCharacterSize(26);
+        title.setFillColor(sf::Color::White);
+        title.setString("TRYB RYSOWANIA");
+        title.setPosition(20.f, 15.f);
+
+        window_.draw(makeTextBackdrop(title, 7.f, sf::Color(0,0,0,200)));
+        window_.draw(title);
+
+        sf::Text info;
+        info.setFont(uiFont_);
+        info.setCharacterSize(18);
+        info.setFillColor(sf::Color(230, 230, 230));
+
+        std::string blocks =
+            "Dostepne bloki: " + std::to_string(maxBuildBlocks_ - builtBlocks_) +
+            " / " + std::to_string(maxBuildBlocks_);
+
+        info.setString(
+            "LPM - stawianie    |    PPM - usuwanie    |    ENTER - zatwierdzenie\n" +
+            blocks + "\n" +
+            "Nie mozna stawiac bloku na kaflu ze srodkiem hitboxu czolgu"
+        );
+        info.setPosition(20.f, 55.f);
+
+        window_.draw(makeTextBackdrop(info, 8.f, sf::Color(0,0,0,200)));
+        window_.draw(info);
+
+        return;
+    }
+
+    //TRYB GRY 
+    sf::Text title;
+    title.setFont(uiFont_);
+    title.setCharacterSize(26);
+    title.setFillColor(sf::Color::White);
+    title.setString("POWER-UPY");
+    title.setPosition(20.f, 15.f);
+
+    window_.draw(makeTextBackdrop(title, 7.f, sf::Color(0,0,0,200)));
+    window_.draw(title);
+
+    float x = 20.f;
+    float y = 55.f;
+
+    struct Item { const char* name; const char* desc; int tex; };
+    static Item items[] = {
+        {"HEAL", "+20 HP", 2},
+        {"DMG BOOST", "DMG x4", 3},
+        {"SPEED", "MOVE/TURN +", 4},
+        {"MAX HP", "MAXHP 400", 5},
+        {"FAST RELOAD", "RELOAD x0.2", 6},
+    };
+
+    const float blockW = 190.f;
+    const float iconSize = 34.f;
+
+    for (auto &it : items) {
+        sf::Sprite icon;
+        icon.setTexture(poweruppTex_[it.tex]);
+        auto b = icon.getLocalBounds();
+        icon.setOrigin(b.width * 0.5f, b.height * 0.5f);
+        icon.setScale(iconSize / b.width, iconSize / b.height);
+        icon.setPosition(x + 18.f, y + 18.f);
+        window_.draw(icon);
+
+        sf::Text name;
+        name.setFont(uiFont_);
+        name.setCharacterSize(16);
+        name.setFillColor(sf::Color::White);
+        name.setString(it.name);
+        name.setPosition(x + 40.f, y + 2.f);
+
+        window_.draw(makeTextBackdrop(name, 5.f, sf::Color(0,0,0,200)));
+        window_.draw(name);
+
+        sf::Text desc;
+        desc.setFont(uiFont_);
+        desc.setCharacterSize(14);
+        desc.setFillColor(sf::Color(220, 220, 220));
+        desc.setString(it.desc);
+        desc.setPosition(x + 40.f, y + 24.f);
+
+        window_.draw(makeTextBackdrop(desc, 5.f, sf::Color(0,0,0,200)));
+        window_.draw(desc);
+
+        x += blockW;
+        if (x + blockW > WORLD_WIDTH) break;
+    }
+
 }

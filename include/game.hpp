@@ -42,6 +42,7 @@ private:
     bool tankHitsBlocks(const Tank& t) const;
     bool projectileHitCell(const Projectile& p, sf::Vector2u& outCell) const;
     void damageBlockAt(unsigned x, unsigned y);
+    bool cellOverlapsAnyTank(unsigned cellX, unsigned cellY) const;
 
     void projectileHitTank(Projectile& p, Tank& t);
     bool tankHitsOtherTanks(const Tank& me) const;
@@ -59,6 +60,13 @@ private:
     sf::Music gameOverMusic_;
 
     void updateMusic();
+
+    std::string keyToString(sf::Keyboard::Key k) const;
+    void drawEditorIntro();    
+    void drawFightBanner();
+    void drawTankKeyLabels();
+
+    void drawPowerUpTopBar();
 
 private:
     sf::RenderWindow window_;
@@ -85,4 +93,30 @@ private:
 
     //strzal jeden per wcisniecie guzika strzalu - kg
     std::vector<bool> shotLocked_;
+
+    enum class EditorPhase { INTRO, BUILD, PREFIGHT, OFF };
+
+    EditorPhase editorPhase_ = EditorPhase::INTRO;
+
+    sf::Font uiFont_;
+    sf::Text introText_;            
+    float introShowTime_ = 1.2f;    
+
+    sf::Text fightText_;
+
+    sf::Clock phaseClock_;
+
+    float preFightDuration_ = 1.0f;  
+
+    struct PowerUpInfo {
+        std::string name;
+        std::string desc;
+        int texIndex; 
+    };
+
+    sf::View worldView_;
+    float topUiHeight_ = 140.f; 
+
+    sf::Texture topBarTex_;
+    sf::Sprite  topBarSprite_;
 };
