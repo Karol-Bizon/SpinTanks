@@ -17,15 +17,15 @@ void Projectile::draw(sf::RenderTarget& target) const {
     target.draw(sprite_);
 
     //DEBUG - pokazuje collider pocisku (ogromnie wielki byl oryginalnie XD)
-    sf::CircleShape debug;
-    float r = getHitboxRadius();
-    debug.setRadius(r);
-    debug.setOrigin(r, r);
-    debug.setPosition(getHitboxCenter());
-    debug.setFillColor(sf::Color::Transparent);
-    debug.setOutlineThickness(1.f);
-    debug.setOutlineColor(sf::Color::Green);
-    target.draw(debug);
+    // sf::CircleShape debug;
+    // float r = getHitboxRadius();
+    // debug.setRadius(r);
+    // debug.setOrigin(r, r);
+    // debug.setPosition(getHitboxCenter());
+    // debug.setFillColor(sf::Color::Transparent);
+    // debug.setOutlineThickness(1.f);
+    // debug.setOutlineColor(sf::Color::Green);
+    // target.draw(debug);
 }
 //wiemy kto strzela
 void Projectile::setOwner(int tankn) {

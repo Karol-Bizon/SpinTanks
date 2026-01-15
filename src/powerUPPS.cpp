@@ -27,20 +27,20 @@ void PowerUP::draw(sf::RenderTarget& target) const {
     target.draw(sprite_);
 
     //DEBUG - pokazuje collider powerupp (ogromnie wielki byl oryginalnie XD)
-    sf::FloatRect box = sprite_.getGlobalBounds();
-    sf::RectangleShape debug;
-    debug.setPosition({ box.left, box.top });
-    debug.setSize({ box.width, box.height });
-    debug.setFillColor(sf::Color::Transparent);
-    debug.setOutlineThickness(1.f);
-    debug.setOutlineColor(sf::Color::Yellow);
-    target.draw(debug);
+    // sf::FloatRect box = sprite_.getGlobalBounds();
+    // sf::RectangleShape debug;
+    // debug.setPosition({ box.left, box.top });
+    // debug.setSize({ box.width, box.height });
+    // debug.setFillColor(sf::Color::Transparent);
+    // debug.setOutlineThickness(1.f);
+    // debug.setOutlineColor(sf::Color::Yellow);
+    // target.draw(debug);
 }
 
 
 
 void PowerUP::placeRandom(const sf::FloatRect& bounds) {
-    //jeœli bounds ma zerowy rozmiar, nic nie rób
+    //jeï¿½li bounds ma zerowy rozmiar, nic nie rï¿½b
     if (bounds.width <= 0.f || bounds.height <= 0.f) return;
 
     //statyczny RNG

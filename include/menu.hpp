@@ -25,7 +25,10 @@ public:
 
     void setScreen(Screen);
 
-    
+    void setTankWinner(int id) { tankWinnerID_ = id; }
+
+    std::string getTankWinnerKey() const;
+
 private:
     sf::Font font_;
     sf::Text text_;
@@ -53,4 +56,6 @@ private:
 
     float width_;
     float height_;
+
+    int tankWinnerID_ = -1;
 };

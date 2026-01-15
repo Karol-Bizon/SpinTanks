@@ -129,14 +129,14 @@ Game::Game()
     map_.setScale(0.4f, 0.4f); 
     currentBrush_ = 1;
 
-    if (!menuMusic_.openFromFile("audio/menu_music.mp3")) {
+    if (!menuMusic_.openFromFile("audio/menu_music.ogg")) {
     std::cout << "Failed to load menu music!\n";
     } else {
         menuMusic_.setLoop(true);
         menuMusic_.setVolume(40.f); // np. 0–100
     }
 
-    if (!gameMusic_.openFromFile("audio/battle_music.mp3")) {
+    if (!gameMusic_.openFromFile("audio/battle_music.ogg")) {
     std::cout << "Failed to load gameplay music\n";
     } else {
         gameMusic_.setLoop(true);
@@ -144,7 +144,7 @@ Game::Game()
     }
 
     // GAME OVER
-    if (!gameOverMusic_.openFromFile("audio/final_music.mp3")) {
+    if (!gameOverMusic_.openFromFile("audio/final_music.ogg")) {
         std::cout << "Failed to load game over music\n";
     } else {
         gameOverMusic_.setLoop(false);
@@ -373,6 +373,7 @@ void Game::update(float dt) {
     if (aliveTanks() <= 1) {
         state_ = GameState::GAME_OVER;
         menu_.setScreen(Menu::Screen::GAME_OVER);
+        menu_.setTankWinner(getTankWinner());
     }
 }
 }
@@ -401,17 +402,17 @@ void Game::render() {
     for (auto& tank : tanks_) {
             tank.draw(window_);
             // ===== DEBUG HITBOX =====
-            sf::FloatRect hb = tank.getHitBox();
+            // sf::FloatRect hb = tank.getHitBox();
 
-            sf::CircleShape dbg;
-            dbg.setRadius(tank.getHitboxRadius());
-            dbg.setOrigin(dbg.getRadius(), dbg.getRadius());
-            dbg.setPosition(tank.getHitboxCenter());
-            dbg.setFillColor(sf::Color::Transparent);
-            dbg.setOutlineThickness(1.f);
-            dbg.setOutlineColor(sf::Color::Red);
+            // sf::CircleShape dbg;
+            // dbg.setRadius(tank.getHitboxRadius());
+            // dbg.setOrigin(dbg.getRadius(), dbg.getRadius());
+            // dbg.setPosition(tank.getHitboxCenter());
+            // dbg.setFillColor(sf::Color::Transparent);
+            // dbg.setOutlineThickness(1.f);
+            // dbg.setOutlineColor(sf::Color::Red);
 
-            window_.draw(dbg);
+            // window_.draw(dbg);
         }
 
     for (auto& p : projectiles_)
@@ -435,6 +436,7 @@ void Game::render() {
     }
 
     if (state_ == GameState::GAME_OVER) {
+        drawPowerUpTopBar();
         menu_.render(window_);
     }
 
@@ -1080,4 +1082,15 @@ void Game::resetGame() {
     map_.clear();
 
     builtBlocks_ = 0;
+}
+
+int Game::getTankWinner() {
+    if(aliveTanks() == 1) {
+        for (auto& t : tanks_) {
+            if (t.isAlive()) {
+                return t.getID();
+            }
+        }
+    }
+    return -1;
 }

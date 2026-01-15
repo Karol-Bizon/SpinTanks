@@ -1,6 +1,9 @@
 #include "menu.hpp"
 #include <iostream>
 
+
+
+
 Menu::Menu(float width, float height)
 {
     if (!font_.loadFromFile("graphics/main_font.ttf")) {
@@ -32,6 +35,18 @@ Menu::Menu(float width, float height)
     width_ = width;
     height_ = height;
 
+}
+
+static sf::RectangleShape makeTextBackdrop(const sf::Text& txt, float padding = 6.f, sf::Color color = sf::Color(0,0,0,110))
+{
+    sf::FloatRect b = txt.getGlobalBounds();
+    sf::RectangleShape r;
+    r.setPosition(b.left - padding, b.top - padding);
+    r.setSize({ b.width + 2.f * padding, b.height + 2.f * padding });
+    r.setFillColor(color);
+    r.setOutlineThickness(1.f);
+    r.setOutlineColor(sf::Color(255, 255, 255, 18));
+    return r;
 }
 
 void Menu::handleEvent(const sf::Event& event) {
@@ -130,12 +145,17 @@ void Menu::renderPlayerSelect(sf::RenderWindow& window) {
     sf::Text info("USE ARROWS TO CHANGE NUMBER OF PLAYERS", font_, 32);
     centerText(info, width_ / 2.f, height_ * 0.7f);
 
+
+    
+
     sf::Text info2("PRESS ENTER TO PROCEED", font_, 32);
     centerText(info2, width_ / 2.f, height_ * 0.8f);
 
     window.draw(title);
     window.draw(players);
+    window.draw(makeTextBackdrop(info, 7.f, sf::Color(0,0,0,150)));
     window.draw(info);
+    window.draw(makeTextBackdrop(info2, 7.f, sf::Color(0,0,0,150)));
     window.draw(info2);
 }
 
@@ -143,6 +163,13 @@ void Menu::renderGameOver(sf::RenderWindow& window) {
 
     sf::Text title("GAME OVER", font_, 80);
     centerText(title, width_ / 2.f, height_ * 0.3f);
+
+    sf::Text message(
+        "PLAYER " + getTankWinnerKey() + " WINS!",
+        font_,
+        64
+    );
+    centerText(message, width_ / 2.f, height_ * 0.5f);
 
     sf::Text info("RETURN TO MAIN MENU - BACKSPACE", font_, 32);
     centerText(info, width_ / 2.f, height_ * 0.85f);
@@ -153,6 +180,7 @@ void Menu::renderGameOver(sf::RenderWindow& window) {
     window.draw(title);
     window.draw(info);
     window.draw(info2);
+    window.draw(message);
 }
 
 void Menu::setScreen(Screen s) {
@@ -180,3 +208,17 @@ void Menu::centerText(sf::Text& text, float x, float y) {
     );
     text.setPosition(x, y);
 }
+
+std::string Menu::getTankWinnerKey() const {
+    if (tankWinnerID_ < 0) return "NONE";
+    
+    switch (tankWinnerID_) {
+        case 1: return "SPACE";
+        case 2: return "ENTER";
+        case 3: return "W";
+        case 4: return "UPARROW";
+    }
+
+    return "UNKNOWN";
+}
+

@@ -68,6 +68,8 @@ private:
 
     void drawPowerUpTopBar();
 
+    int getTankWinner();
+
 private:
     sf::RenderWindow window_;
     sf::Clock clock_;
