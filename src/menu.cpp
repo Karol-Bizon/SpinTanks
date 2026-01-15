@@ -12,13 +12,13 @@ Menu::Menu(float width, float height)
 
     text_.setFont(font_);
     // text_.setString("PRESS ENTER TO START");
-    text_.setCharacterSize(40);
-    text_.setFillColor(sf::Color::White);
+    // text_.setCharacterSize(40);
+    // text_.setFillColor(sf::Color::White);
 
-    // Center the text
-    sf::FloatRect bounds = text_.getLocalBounds();
-    text_.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    text_.setPosition(width / 2.f, height / 2.f);
+    // // Center the text
+    // sf::FloatRect bounds = text_.getLocalBounds();
+    // text_.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+    // text_.setPosition(width / 2.f, height / 2.f);
 
     if (!backgroundTex_.loadFromFile("graphics/bg_wallpaper.png")) {
         std::cout << "Failed to load menu background!\n";
@@ -144,9 +144,6 @@ void Menu::renderPlayerSelect(sf::RenderWindow& window) {
 
     sf::Text info("USE ARROWS TO CHANGE NUMBER OF PLAYERS", font_, 32);
     centerText(info, width_ / 2.f, height_ * 0.7f);
-
-
-    
 
     sf::Text info2("PRESS ENTER TO PROCEED", font_, 32);
     centerText(info2, width_ / 2.f, height_ * 0.8f);

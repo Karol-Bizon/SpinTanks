@@ -6,7 +6,6 @@
 
 static constexpr float PI = 3.14159265f;
 
-//definicja czolgu, jego rozmiar chyba nie rowna sie rozmiarowi tekstury --- obserwowalne podczas gry -krzys
 Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Texture& texture)
 : controlKey_(controlKey)
 {
@@ -16,28 +15,21 @@ Tank::Tank(sf::Vector2f position, sf::Keyboard::Key controlKey, const sf::Textur
     body_.setOrigin(body_.getSize() * 0.5f);
     body_.setPosition(position);
 
-    //rzeczy pasek hp - kg
-    //HP bar background
     hpBarBack_.setSize({ hpBarWidth_, hpBarHeight_ });
     hpBarBack_.setOrigin(hpBarWidth_ / 2.f, hpBarHeight_ / 2.f);
     hpBarBack_.setFillColor(sf::Color(50, 50, 50, 200));
 
-    //HP bar front (green)
     hpBarFront_.setSize({ hpBarWidth_, hpBarHeight_ });
     hpBarFront_.setOrigin(hpBarWidth_ / 2.f, hpBarHeight_ / 2.f);
     hpBarFront_.setFillColor(sf::Color::Green);
 
-    //hp text (font must by� ustawiony przez setFont je�li chcesz tekst)
     hpText_.setCharacterSize(12);
     hpText_.setFillColor(sf::Color::White);
 
-    //rzeczy przeladowanie - kg
-    //reload bar background
     reloadBarBack_.setSize({ reloadBarWidth_, reloadBarHeight_ });
     reloadBarBack_.setOrigin(reloadBarWidth_ / 2.f, reloadBarHeight_ / 2.f);
     reloadBarBack_.setFillColor(sf::Color(50, 50, 50, 200));
 
-    //reload bar front
     reloadBarFront_.setSize({ reloadBarWidth_, reloadBarHeight_ });
     reloadBarFront_.setOrigin(0.f, reloadBarHeight_ / 2.f); //origin po lewej
     reloadBarFront_.setFillColor(reloadColor_);
@@ -49,13 +41,11 @@ void Tank::setFont(const sf::Font& font) {
 }
 
 
-// apply damage
 void Tank::takeDamage(float amount) {
-    //if (amount <= 0.f) return;
     hp_ -= amount;
     hp_ = std::max(0.f, hp_);
     hp_ = std::min(hp_, maxHp_);
-    // flash tank
+
     recentlyDamaged_ = true;
     damageClock_.restart();
     body_.setFillColor(sf::Color::Red);
@@ -99,7 +89,6 @@ sf::Vector2f Tank::getForward() const {
 //setid
 void Tank::setID(int ide) {
     id_ = ide;
-    //customowe kolorki hp barow
     static const sf::Color hpColors[4] = {
     sf::Color::Red,
     sf::Color::Green,
@@ -309,7 +298,7 @@ sf::FloatRect Tank::getHitBox() const {
 }
 
 sf::Vector2f Tank::getHitboxCenter() const {
-    // środek czołgu = środek body_
+    // środek czołgu = środek body_g
     return body_.getPosition();
 }
 

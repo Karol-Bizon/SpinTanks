@@ -177,6 +177,7 @@ Game::Game()
 
 void Game::run() {
     while (window_.isOpen()) {
+
         processEvents();
         updateMusic();
         float dt = clock_.restart().asSeconds();
@@ -370,12 +371,12 @@ void Game::update(float dt) {
     );
 
     if (state_ == GameState::PLAYING) {
-    if (aliveTanks() <= 1) {
-        state_ = GameState::GAME_OVER;
-        menu_.setScreen(Menu::Screen::GAME_OVER);
-        menu_.setTankWinner(getTankWinner());
+        if (aliveTanks() <= 1) {
+            state_ = GameState::GAME_OVER;
+            menu_.setScreen(Menu::Screen::GAME_OVER);
+            menu_.setTankWinner(getTankWinner());
+        }
     }
-}
 }
 
 void Game::render() {
