@@ -1,0 +1,90 @@
+name: Windows build (Release) + ZIP
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # vcpkg bez zmian w repo – instalujemy SFML w pipeline
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: "e6f9c0a1b9a1b8a7b2fdd61d5c4b5d84b7f2df1f"  # stabilny commit; możesz zmienić później
+          runVcpkgInstall: true
+          vcpkgJsonGlob: ""  # nie używamy manifestu z repo
+
+      - name: Install SFML via vcpkg
+        shell: pwsh
+        run: |
+          vcpkg install sfml:x64-windows
+
+      - name: Configure (CMake + MSVC + vcpkg toolchain)
+        shell: pwsh
+        run: |
+          cmake -S . -B build-windows `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_TOOLCHAIN_FILE="${env:VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows
+
+      - name: Build (Release)
+        shell: pwsh
+        run: |
+          cmake --build build-windows --config Release
+
+      - name: Package (EXE + DLL + assets)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          # Folder paczki
+          New-Item -ItemType Directory -Force -Path dist\SpinTanks | Out-Null
+
+          # Znajdź .exe (nie zakładamy sztywnej ścieżki)
+          $exe = Get-ChildItem -Path build-windows -Recurse -Filter "*.exe" |
+                 Where-Object { $_.Name -match "spinTanks|SpinTanks" } |
+                 Select-Object -First 1
+
+          if (-not $exe) {
+            Write-Host "Nie znaleziono pliku .exe w build-windows. Lista .exe:"
+            Get-ChildItem -Path build-windows -Recurse -Filter "*.exe" | ForEach-Object { Write-Host $_.FullName }
+            exit 1
+          }
+
+          Copy-Item $exe.FullName dist\SpinTanks\ -Force
+
+          # Kopiuj assety 1:1 (bez zmian struktury)
+          if (Test-Path .\audio)    { Copy-Item .\audio    dist\SpinTanks\audio    -Recurse -Force }
+          if (Test-Path .\graphics) { Copy-Item .\graphics dist\SpinTanks\graphics -Recurse -Force }
+          if (Test-Path .\map.txt)  { Copy-Item .\map.txt  dist\SpinTanks\ -Force }
+
+          # (opcjonalnie) README / LICENSE do paczki
+          if (Test-Path .\README.md) { Copy-Item .\README.md dist\SpinTanks\ -Force }
+          if (Test-Path .\LICENSE)   { Copy-Item .\LICENSE   dist\SpinTanks\ -Force }
+
+          # DLL-e z vcpkg (SFML + zależności) obok exe
+          $vcpkgBin = Join-Path $env:VCPKG_ROOT "installed\x64-windows\bin"
+          if (-not (Test-Path $vcpkgBin)) {
+            Write-Host "Nie znaleziono vcpkg bin: $vcpkgBin"
+            exit 1
+          }
+
+          Copy-Item "$vcpkgBin\*.dll" dist\SpinTanks\ -Force
+
+          # Zip
+          if (Test-Path dist\SpinTanks.zip) { Remove-Item dist\SpinTanks.zip -Force }
+          Compress-Archive -Path dist\SpinTanks -DestinationPath dist\SpinTanks.zip -Force
+
+      - name: Upload artifact (ZIP)
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpinTanks-Windows-Release
+          path: dist/SpinTanks.zip
