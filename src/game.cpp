@@ -190,8 +190,10 @@ void Game::run() {
             window_.display();
 
             if (menu_.startRequested()) {
+
                 startGame(menu_.getPlayerCount());
                 state_ = GameState::PLAYING;
+
             }
             continue;
         }
@@ -227,9 +229,6 @@ void Game::processEvents() {
             }    
         }
 
-
-
-
         if (e.type == sf::Event::Closed)
             window_.close();
 
@@ -249,7 +248,6 @@ void Game::processEvents() {
                 tank.handleEvent(e);
             handleShootInput(e);
         }
-
         
     }
 }
@@ -384,7 +382,7 @@ void Game::render() {
     float winH = static_cast<float>(window_.getSize().y);
 
     float topFrac = topUiHeight_ / winH;
-    topFrac = std::clamp(topFrac, 0.f, 0.4f); // bezpieczeństwo
+    topFrac = std::clamp(topFrac, 0.f, 0.4f);
 
     worldView_.setViewport(sf::FloatRect(0.f, topFrac, 1.f, 1.f - topFrac));
 
@@ -396,25 +394,11 @@ void Game::render() {
 
     window_.draw(map_);
 
-    //rysowanie powerupps
     for (auto& pu : powerupps_)
         pu.draw(window_);
 
-    for (auto& tank : tanks_) {
-            tank.draw(window_);
-            // ===== DEBUG HITBOX =====
-            // sf::FloatRect hb = tank.getHitBox();
-
-            // sf::CircleShape dbg;
-            // dbg.setRadius(tank.getHitboxRadius());
-            // dbg.setOrigin(dbg.getRadius(), dbg.getRadius());
-            // dbg.setPosition(tank.getHitboxCenter());
-            // dbg.setFillColor(sf::Color::Transparent);
-            // dbg.setOutlineThickness(1.f);
-            // dbg.setOutlineColor(sf::Color::Red);
-
-            // window_.draw(dbg);
-        }
+    for (auto& tank : tanks_)
+        tank.draw(window_);
 
     for (auto& p : projectiles_)
         p.draw(window_);

@@ -11,14 +11,6 @@ Menu::Menu(float width, float height)
     }
 
     text_.setFont(font_);
-    // text_.setString("PRESS ENTER TO START");
-    // text_.setCharacterSize(40);
-    // text_.setFillColor(sf::Color::White);
-
-    // // Center the text
-    // sf::FloatRect bounds = text_.getLocalBounds();
-    // text_.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    // text_.setPosition(width / 2.f, height / 2.f);
 
     if (!backgroundTex_.loadFromFile("graphics/bg_wallpaper.png")) {
         std::cout << "Failed to load menu background!\n";
@@ -159,21 +151,24 @@ void Menu::renderPlayerSelect(sf::RenderWindow& window) {
 void Menu::renderGameOver(sf::RenderWindow& window) {
 
     sf::Text title("GAME OVER", font_, 80);
-    centerText(title, width_ / 2.f, height_ * 0.3f);
 
     sf::Text message(
         "PLAYER " + getTankWinnerKey() + " WINS!",
         font_,
         64
     );
-    centerText(message, width_ / 2.f, height_ * 0.5f);
 
     sf::Text info("RETURN TO MAIN MENU - BACKSPACE", font_, 32);
-    centerText(info, width_ / 2.f, height_ * 0.85f);
 
     sf::Text info2("QUIT GAME - ESCAPE", font_, 32);
+    
+
+    centerText(title, width_ / 2.f, height_ * 0.3f);
+    centerText(message, width_ / 2.f, height_ * 0.5f);
+    centerText(info, width_ / 2.f, height_ * 0.85f);
     centerText(info2, width_ / 2.f, height_ * 0.9f);
 
+    
     window.draw(title);
     window.draw(info);
     window.draw(info2);
