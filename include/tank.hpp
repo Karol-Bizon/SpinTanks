@@ -85,7 +85,7 @@ private:
     sf::RectangleShape body_;
     sf::Keyboard::Key controlKey_;
     float angleDeg_ = 0.f;
-    float turnSpeed_ = 90.f; // za szybko do testow strzelania, zmieniam na 30.f, bylo 180.f
+    float turnSpeed_ = 140.f; // za szybko do testow strzelania, zmieniam na 30.f, bylo 180.f
     float moveSpeed_ = 180.f;
     float turnDirection_ = 1.f;
     float DMG_ = 7.7f;
@@ -125,7 +125,7 @@ private:
     /// reload logika - kg
     bool isReloaded_ = true;
     sf::Clock reloadCLK_;
-    float reloadDuration_ = 0.25f;
+    float reloadDuration_ = 0.5f;
 
     //pasek przeladowania
     sf::RectangleShape reloadBarBack_;

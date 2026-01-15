@@ -204,10 +204,30 @@ void Game::processEvents() {
     sf::Event e;
     while (window_.pollEvent(e)) {
 
-        if (state_ == GameState::MENU || state_ == GameState::GAME_OVER) {
+        if (state_ == GameState::MENU) {
             menu_.handleEvent(e);
+            if (menu_.quitRequested()) {
+                window_.close();
+            }
             continue;
         }
+
+        if (state_ == GameState::GAME_OVER) {
+            menu_.handleEvent(e);
+
+            if (menu_.quitRequested()) {
+                window_.close();
+            }
+
+            if (menu_.startRequested()) {
+                resetGame();
+                menu_.setScreen(Menu::Screen::MAIN);
+                state_ = GameState::MENU;
+            }    
+        }
+
+
+
 
         if (e.type == sf::Event::Closed)
             window_.close();
@@ -228,6 +248,8 @@ void Game::processEvents() {
                 tank.handleEvent(e);
             handleShootInput(e);
         }
+
+        
     }
 }
 
@@ -1040,4 +1062,22 @@ void Game::drawPowerUpTopBar() {
         if (x + blockW > WORLD_WIDTH) break;
     }
 
+}
+
+void Game::resetGame() {
+
+    // --- TANKI ---
+    tanks_.clear();
+
+    // --- POCISKI ---
+    projectiles_.clear();
+
+
+    // --- EDYTOR ---
+    editorEnabled_ = false;
+    editorPhase_ = EditorPhase::OFF;
+
+    map_.clear();
+
+    builtBlocks_ = 0;
 }

@@ -30,6 +30,8 @@ public:
     bool saveToFile(const std::string& path) const;
     bool loadFromFile(const std::string& path);
 
+    void clear();
+
 private:
     void rebuildVertices();
     void updateCellVertex(unsigned x, unsigned y);

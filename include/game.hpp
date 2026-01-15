@@ -121,4 +121,6 @@ private:
     sf::Sprite  topBarSprite_;
 
     bool tankLabelVisible_[4] = { true, true, true, true };
+
+    void resetGame();
 };

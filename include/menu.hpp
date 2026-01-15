@@ -19,6 +19,8 @@ public:
 
     bool startRequested() const;
 
+    bool quitRequested() const;
+
     std::size_t getPlayerCount() const;
 
     void setScreen(Screen);
@@ -28,6 +30,7 @@ private:
     sf::Font font_;
     sf::Text text_;
     bool startRequested_ = false;
+    bool quitRequested_ = false;
 
     Screen screen_ = Screen::MAIN;
 
@@ -45,4 +48,9 @@ private:
 
     sf::Texture backgroundTex_;
     sf::Sprite  backgroundSprite_;
+
+    void centerText(sf::Text& text, float x, float y);
+
+    float width_;
+    float height_;
 };

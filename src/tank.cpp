@@ -195,11 +195,6 @@ void Tank::update(float dt) {
         angleDeg_ += turnDirection_ * turnSpeed_ * dt;
     }
 
-    float rad = angleDeg_ * PI / 180.f;
-     if (!movingForward_) {
-        angleDeg_ += turnDirection_ * turnSpeed_ * dt;
-    }
-
     if (movingForward_) {
         body_.move(getForward() * moveSpeed_ * dt);
     }
@@ -207,7 +202,7 @@ void Tank::update(float dt) {
     body_.setRotation(angleDeg_ + 90.f);
     clampToWorld();
 
-
+ 
     
 }
 

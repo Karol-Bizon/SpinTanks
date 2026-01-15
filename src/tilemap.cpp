@@ -179,3 +179,12 @@ bool TileMap::loadAtlasFromFiles(const std::vector<std::string>& paths) {
     tileSizePx_ = size0; 
     return true;
 }
+
+void TileMap::clear() {
+    // tiles_.clear();
+    // vertices_.clear();
+    // width_ = 0;
+    // height_ = 0;
+    std::fill(tiles_.begin(), tiles_.end(), 0);
+    rebuildVertices();
+}

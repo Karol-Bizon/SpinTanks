@@ -1,13 +1,14 @@
 #include "menu.hpp"
 #include <iostream>
 
-Menu::Menu(float width, float height) {
+Menu::Menu(float width, float height)
+{
     if (!font_.loadFromFile("graphics/main_font.ttf")) {
         std::cout << "Failed to load font for menu!" << std::endl;
     }
 
     text_.setFont(font_);
-    text_.setString("PRESS ENTER TO START");
+    // text_.setString("PRESS ENTER TO START");
     text_.setCharacterSize(40);
     text_.setFillColor(sf::Color::White);
 
@@ -27,6 +28,9 @@ Menu::Menu(float width, float height) {
             height / static_cast<float>(s.y)
         );
     }
+
+    width_ = width;
+    height_ = height;
 
 }
 
@@ -49,22 +53,36 @@ void Menu::handleMainMenuEvent(const sf::Event& event) {
         event.key.code == sf::Keyboard::Enter) {
         screen_ = Screen::PLAYER_SELECT;
     }
+
+    if (event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Escape) {
+        quitRequested_ = true;
+    }
 }
 
 void Menu::handlePlayerSelectEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Left) {
-            if (playerCount_ > 1) playerCount_--;
+            if (playerCount_ > 2) playerCount_--;
         } else if (event.key.code == sf::Keyboard::Right) {
             if (playerCount_ < 4) playerCount_++;
         } else if (event.key.code == sf::Keyboard::Enter) {
             startRequested_ = true;
         }
     }
+
+    if (event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Escape) {
+        quitRequested_ = true;
+    }
 }
 
 bool Menu::startRequested() const {
     return startRequested_;
+}
+
+bool Menu::quitRequested() const {
+    return quitRequested_;
 }
 
 std::size_t Menu::getPlayerCount() const {
@@ -90,31 +108,51 @@ void Menu::render(sf::RenderWindow& window) {
 
 
 void Menu::renderMainMenu(sf::RenderWindow& window) {
-    text_.setString("PRESS ENTER TO START");
-    window.draw(text_);
+    sf::Text title("SPIN TANKS", font_, 72);
+    centerText(title, width_ / 2.f, height_ * 0.3f);
+    sf::Text prompt("--- PRESS ENTER TO START ---", font_, 32);
+    centerText(prompt, width_ / 2.f, height_ * 0.5f);
+    window.draw(title);
+    window.draw(prompt);
 }
 
 void Menu::renderPlayerSelect(sf::RenderWindow& window) {
-    text_.setString(
-        "PLAYERS: " + std::to_string(playerCount_) +
-        "\nLEFT / RIGHT\nENTER TO START"
+    sf::Text title("CHOOSE NUMBER OF PLAYERS", font_, 64);
+    centerText(title, width_ / 2.f, height_ * 0.3f);
+
+    sf::Text players(
+        std::to_string(playerCount_) + " Players",
+        font_,
+        48
     );
-    window.draw(text_);
+    centerText(players, width_ / 2.f, height_ * 0.5f);
+
+    sf::Text info("USE ARROWS TO CHANGE NUMBER OF PLAYERS", font_, 32);
+    centerText(info, width_ / 2.f, height_ * 0.7f);
+
+    sf::Text info2("PRESS ENTER TO PROCEED", font_, 32);
+    centerText(info2, width_ / 2.f, height_ * 0.8f);
+
+    window.draw(title);
+    window.draw(players);
+    window.draw(info);
+    window.draw(info2);
 }
 
 void Menu::renderGameOver(sf::RenderWindow& window) {
-    text_.setString("GAME OVER\nENTER");
-    text_.setCharacterSize(80);
-    text_.setFillColor(sf::Color::Red);
 
-    auto b = text_.getLocalBounds();
-    text_.setOrigin(b.width / 2.f, b.height / 2.f);
-    text_.setPosition(
-        window.getSize().x / 2.f,
-        window.getSize().y / 2.f
-    );
+    sf::Text title("GAME OVER", font_, 80);
+    centerText(title, width_ / 2.f, height_ * 0.3f);
 
-    window.draw(text_);
+    sf::Text info("RETURN TO MAIN MENU - BACKSPACE", font_, 32);
+    centerText(info, width_ / 2.f, height_ * 0.85f);
+
+    sf::Text info2("QUIT GAME - ESCAPE", font_, 32);
+    centerText(info2, width_ / 2.f, height_ * 0.9f);
+
+    window.draw(title);
+    window.draw(info);
+    window.draw(info2);
 }
 
 void Menu::setScreen(Screen s) {
@@ -124,7 +162,21 @@ void Menu::setScreen(Screen s) {
 
 void Menu::handleGameOverEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed &&
-        event.key.code == sf::Keyboard::Enter) {
-        startRequested_ = true; // wracamy do menu / restart
+        event.key.code == sf::Keyboard::Backspace) {
+        startRequested_ = true;
     }
+
+    if (event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Escape) {
+        quitRequested_ = true;
+    }
+}
+
+void Menu::centerText(sf::Text& text, float x, float y) {
+    sf::FloatRect bounds = text.getLocalBounds();
+    text.setOrigin(
+        bounds.left + bounds.width  / 2.f,
+        bounds.top  + bounds.height / 2.f
+    );
+    text.setPosition(x, y);
 }
